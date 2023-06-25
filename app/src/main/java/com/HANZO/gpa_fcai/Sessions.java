@@ -35,10 +35,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Locale;
 
 public class Sessions extends AppCompatActivity {
 
@@ -275,6 +277,19 @@ public class Sessions extends AppCompatActivity {
 
 
     }
+    private double parseArabicNumber(String numberString) {
+        try {
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("ar"));
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00", symbols);
+            // Convert Arabic number string to a numeric value
+            Number number = decimalFormat.parse(numberString);
+            return number.doubleValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle the parsing error gracefully
+            return 0.0;
+        }
+    }
     private void undoRowDeletion(View deletedView, final int originalIndex) {
         lay.removeView(deletedView);
 
@@ -317,7 +332,7 @@ public class Sessions extends AppCompatActivity {
             }
             double res=points/hou;
             DecimalFormat dec = new DecimalFormat("#0.00");
-            double gpa= Double.parseDouble(dec.format(res));
+            double gpa= parseArabicNumber(dec.format(res));
             if (Double.isNaN(gpa)) {
                 gpa = 0.0;
             }
