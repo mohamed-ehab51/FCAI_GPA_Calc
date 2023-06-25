@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rowe"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_54sdp"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/_4sdp">
+
+    <Space
+        android:layout_width="@dimen/_4sdp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0" />
+
+    <EditText
+        android:id="@+id/editTextText3"
+        android:layout_width="@dimen/_95sdp"
+        android:layout_height="@dimen/_38sdp"
+        android:hint="Subject Name"
+        android:textAlignment="textStart"
+        android:gravity="start"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="#B3B3B3" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editTextText1"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="@dimen/_46sdp"
+        android:hint="Hours"
+        android:inputType="text"
+        android:textColorHint="#B3B3B3"
+        app:hintTextColor="@color/white">
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView20"
+            android:layout_width="@dimen/_73sdp"
+            android:layout_height="@dimen/_41sdp"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editTextText"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="@dimen/_74sdp"
+        android:layout_height="@dimen/_46sdp"
+        android:hint="Grade"
+        android:inputType="text"
+        android:textColorHint="#B3B3B3">
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView2"
+            android:layout_width="@dimen/_73sdp"
+            android:layout_height="@dimen/_41sdp"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/_69sdp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:visibility="gone"
+        app:srcCompat="@drawable/baseline_delete_sweep_24" />
+
+</LinearLayout>
