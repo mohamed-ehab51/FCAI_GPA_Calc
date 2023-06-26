@@ -332,7 +332,14 @@ public class Sessions extends AppCompatActivity {
             }
             double res=points/hou;
             DecimalFormat dec = new DecimalFormat("#0.00");
-            double gpa= parseArabicNumber(dec.format(res));
+            Locale currentLocale = getResources().getConfiguration().locale;
+            boolean isArabicLocale = currentLocale.getLanguage().equals("ar");
+            double gpa=0.0;
+            if (isArabicLocale) {
+                gpa= parseArabicNumber(dec.format(res));
+            } else {
+                gpa= Double.parseDouble(dec.format(res));
+            }
             if (Double.isNaN(gpa)) {
                 gpa = 0.0;
             }
