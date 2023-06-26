@@ -12,6 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="0" />
 
+    <ImageView
+        android:id="@+id/sora"
+        android:layout_width="@dimen/_69sdp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:visibility="gone"
+        app:srcCompat="@drawable/baseline_delete_sweep_24r" />
+
     <EditText
         android:id="@+id/editTextText3"
         android:layout_width="@dimen/_95sdp"

@@ -23,16 +23,16 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextText"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="@dimen/_74sdp"
-        android:layout_height="@dimen/_46sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:hint="Grade"
         android:inputType="text"
         android:textColorHint="#B3B3B3">
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView2"
-            android:layout_width="@dimen/_73sdp"
-            android:layout_height="@dimen/_41sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -44,8 +44,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextText1"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="@dimen/_75sdp"
-        android:layout_height="@dimen/_46sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:hint="Hours"
         android:inputType="text"
         android:textColorHint="#B3B3B3"
@@ -53,8 +53,8 @@
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView20"
-            android:layout_width="@dimen/_73sdp"
-            android:layout_height="@dimen/_41sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,6 +73,14 @@
         android:textAlignment="textStart"
         android:textColor="@color/white"
         android:textColorHint="#B3B3B3" />
+
+    <ImageView
+        android:id="@+id/sora"
+        android:layout_width="@dimen/_69sdp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:visibility="gone"
+        app:srcCompat="@drawable/baseline_delete_sweep_24r" />
 
     <Space
         android:layout_width="@dimen/_4sdp"

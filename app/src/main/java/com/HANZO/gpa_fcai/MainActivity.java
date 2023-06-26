@@ -260,18 +260,11 @@ public class MainActivity extends AppCompatActivity {
         v.setTag(lay.getChildCount() - 1);
         LinearLayout rowLayout = v.findViewById(R.id.rowe);
         GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                boolean result = false;
-                float diffX = e2.getX() - e1.getX();
-                if (Math.abs(diffX) > Math.abs(velocityY) && Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    removeRowWithAnimation(v, diffX > 0);
-                    result = true;
-                }
-                return result;
+                removeRowWithAnimation(v, e2.getX() > e1.getX());
+                return true;
             }
         });
 
@@ -368,21 +361,13 @@ public class MainActivity extends AppCompatActivity {
         lay.addView(v, lay.getChildCount());
         v.setTag(lay.getChildCount() - 1);
         LinearLayout rowLayout = v.findViewById(R.id.rowe);
-        GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 300;
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                boolean result = false;
-                float diffX = e2.getX() - e1.getX();
-                if (Math.abs(diffX) > Math.abs(velocityY) && Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    removeRowWithAnimation(v, diffX > 0);
-                    result = true;
+            GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    removeRowWithAnimation(v, e2.getX() > e1.getX());
+                    return true;
                 }
-                return result;
-            }
-        });
+            });
 
         rowLayout.setOnTouchListener((v1, event) -> {
             gestureDetector.onTouchEvent(event);
@@ -392,7 +377,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void removeRowWithAnimation(@NonNull final View view, final boolean swipeRight) {
         final int defaultBackgroundColor = view.getSolidColor();
-        final ImageView redOverlay = view.findViewById(R.id.imageView);
+        ImageView redOverlay = view.findViewById(R.id.imageView);
+        ImageView redOverlay2 = view.findViewById(R.id.sora);
         final int swipeBackgroundColor = getResources().getColor(R.color.REDD); // Change color as needed
         final int originalIndex = (int) view.getTag();
         Animation animation = new TranslateAnimation(0, swipeRight ? view.getWidth() : -view.getWidth(), 0, 0);
@@ -400,9 +386,15 @@ public class MainActivity extends AppCompatActivity {
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                // Animation start
                 view.setBackgroundColor(swipeBackgroundColor);
+                if(swipeRight)
+                {
+                    redOverlay2.setVisibility(View.VISIBLE);}
+                else{
                 redOverlay.setVisibility(View.VISIBLE);
+
+                }
+                // Animation start
             }
 
             @Override
@@ -446,6 +438,8 @@ public class MainActivity extends AppCompatActivity {
         // Add the undeleted view back to its original position
         final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
         redOverlay.setVisibility(View.GONE);
+        final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
+        redOverlay2.setVisibility(View.GONE);
         lay.addView(deletedView, originalIndex);
         Ho.setText("Total  Hours : "+sum_hours());
         no.setText("  No. Courses : "+lay.getChildCount());

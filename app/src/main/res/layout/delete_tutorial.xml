@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_35sdp"
                 android:layout_marginBottom="1dp"
-                android:text="in any free space swipe to the left "
+                android:text="in any free space swipe to left/right"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="16sp"
