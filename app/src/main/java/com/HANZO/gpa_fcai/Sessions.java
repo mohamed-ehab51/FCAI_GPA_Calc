@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Locale;
 
 public class Sessions extends AppCompatActivity {
@@ -57,7 +58,6 @@ public class Sessions extends AppCompatActivity {
     String[] Hours = {"0","2","3","6"};
     AutoCompleteTextView aut;
     private boolean isSelectionModeEnabled;
-    private ArrayList<View> selectedRows = new ArrayList<>();
     LinearLayout lay;
     Dialog d;
     AutoCompleteTextView H;
@@ -141,9 +141,9 @@ public class Sessions extends AppCompatActivity {
         info.hide();
         closed=true;
         more.setOnClickListener(v -> {
-            for(int i=0;i<selectedRows.size();i++)
+            for(int i=0;i<vies.size();i++)
             {
-                removeRowWithAnimation(selectedRows.get(i),false);
+                removeRowWithAnimation(vies.get(i).vi,false);
             }
         });
         // Show the checkboxes for all rows
@@ -151,6 +151,21 @@ public class Sessions extends AppCompatActivity {
             View row = lay.getChildAt(i);
             CheckBox checkBox = row.findViewById(R.id.checkBox);
             checkBox.setVisibility(View.VISIBLE);
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                int k=(int)row.getTag();
+                Vie Q= new Vie(row,k);
+                if (isChecked) {
+                    vies.add(Q);
+                } else {
+                    for (Iterator<Vie> l = vies.iterator(); l.hasNext();) {
+                        Vie b = l.next();
+                        if ((k==b.getPlace())&& row.equals(b.getVi()))
+                        {
+                            l.remove();
+                        }
+                    }
+                }
+            });
             checkBox.setChecked(false);
             TextInputLayout t= row.findViewById(R.id.editTextText1);
             TextInputLayout t1= row.findViewById(R.id.editTextText);
@@ -203,16 +218,6 @@ public class Sessions extends AppCompatActivity {
         H = v.findViewById(R.id.autoCompleteTextView20);
         H.setKeyListener(null);
         aut.setKeyListener(null);
-        CheckBox checkBox = v.findViewById(R.id.checkBox);
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            int k=(int)v.getTag();
-            Vie Q= new Vie(v,k);
-            if (isChecked) {
-                vies.add(Q);
-            } else {
-                vies.remove(Q);
-            }
-        });
         adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {

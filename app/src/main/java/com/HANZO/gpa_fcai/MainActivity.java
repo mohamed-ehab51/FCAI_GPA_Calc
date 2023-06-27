@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Locale;
 
 import android.view.Window;
@@ -164,6 +165,21 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < lay.getChildCount(); i++) {
             View row = lay.getChildAt(i);
             CheckBox checkBox = row.findViewById(R.id.checkBox);
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                int k=(int)row.getTag();
+                Vie Q= new Vie(row,k);
+                if (isChecked) {
+                    vies.add(Q);
+                } else {
+                    for (Iterator<Vie> l = vies.iterator(); l.hasNext();) {
+                        Vie b = l.next();
+                        if ((k==b.getPlace())&& row.equals(b.getVi()))
+                        {
+                            l.remove();
+                        }
+                    }
+                }
+            });
             checkBox.setVisibility(View.VISIBLE);
             checkBox.setChecked(false);
             TextInputLayout t= row.findViewById(R.id.editTextText1);
@@ -219,16 +235,6 @@ public class MainActivity extends AppCompatActivity {
         H = v.findViewById(R.id.autoCompleteTextView20);
         H.setKeyListener(null);
         aut.setKeyListener(null);
-        CheckBox checkBox = v.findViewById(R.id.checkBox);
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                int k=(int)v.getTag();
-                Vie Q= new Vie(v,k);
-            if (isChecked) {
-                vies.add(Q);
-            } else {
-                vies.remove(Q);
-            }
-        });
         adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -329,16 +335,6 @@ public class MainActivity extends AppCompatActivity {
         H = v.findViewById(R.id.autoCompleteTextView20);
         H.setKeyListener(null);
         aut.setKeyListener(null);
-        CheckBox checkBox = v.findViewById(R.id.checkBox);
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            int k=(int)v.getTag();
-            Vie Q= new Vie(v,k);
-            if (isChecked) {
-                vies.add(Q);
-            } else {
-                vies.remove(Q);
-            }
-        });
         adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
