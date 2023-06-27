@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.GestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +53,8 @@ public class Sessions extends AppCompatActivity {
     EditText na;
     ArrayAdapter<String> adapt;
     ArrayAdapter<String> adapter;
+    private ArrayList<Subject> coming=new ArrayList<>();
+
     FloatingActionButton more,add,info;
     Button back;
     boolean closed = true;
@@ -66,6 +70,7 @@ public class Sessions extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this,R.color.indigo));
             G=findViewById(R.id.textView3);
+            //coming=getIntent().getStringArrayListExtra("data");
             Ho=findViewById(R.id.textView4);
             lay=findViewById(R.id.linearLayout1);
             no.setText("  No. Courses : "+lay.getChildCount());
@@ -114,6 +119,21 @@ public class Sessions extends AppCompatActivity {
             dict.put("F", 0.0);
             Ho.setText("Total  Hours : "+sum_hours());
             G.setText("GPA : "+0.0);
+            try {
+                coming= getIntent().getParcelableArrayListExtra("data");
+                if(coming.size()!=0)
+                {
+                    for (int i=0;i<coming.size();i++)
+                    {
+                        Double fd = coming.get(i).grade;
+                        int intValue = (int) Math.round(fd);
+                        retrieve_row(coming.get(i).name,coming.get(i).hours,intValue);
+                    }
+                    no.setText("  No. Courses : "+lay.getChildCount());
+                    Ho.setText("Total  Hours : "+sum_hours());
+                    CALC();
+                }
+            }catch (Exception ignore){}
         }catch (Exception ignored){}
     }
     private void enableSelectionMode(View m) {try{
@@ -320,6 +340,92 @@ public class Sessions extends AppCompatActivity {
         return sum;
     }catch (Exception ignored){}
         return 0;
+    }
+    private void retrieve_row(String n,int h,int g) {
+        try {
+            View v=getLayoutInflater().inflate(R.layout.row,null,false);
+            na=v.findViewById(R.id.editTextText3);
+            aut = v.findViewById(R.id.autoCompleteTextView2);
+            H = v.findViewById(R.id.autoCompleteTextView20);
+            H.setKeyListener(null);
+            aut.setKeyListener(null);
+            adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    TextView textView = view.findViewById(android.R.id.text1);
+                    textView.setText(grades[position]);
+                    return view;
+                }
+                @Override
+                public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                    View view = super.getDropDownView(position, convertView, parent);
+                    TextView textView = view.findViewById(android.R.id.text1);
+                    textView.setText(grades[position]);
+                    return view;
+                }
+            };
+            adapter = new ArrayAdapter<String>(this, R.layout.drop, Hours) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    TextView textView = view.findViewById(android.R.id.text1);
+                    textView.setText(Hours[position]);
+                    return view;
+                }
+
+                @Override
+                public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                    View view = super.getDropDownView(position, convertView, parent);
+                    TextView textView = view.findViewById(android.R.id.text1);
+                    textView.setText(Hours[position]);
+                    return view;
+                }
+            };
+
+            if(h!=-1){H.setText(adapter.getItem(h));}
+            if(g!=-1){aut.setText(adapt.getItem(g));}
+            aut.setAdapter(adapt);
+            aut.setOnItemClickListener((parent, view, position, id) -> {
+                CALC();
+            });H.setAdapter(adapter);
+            H.setOnItemClickListener((parent, view, position, id) -> {
+                Ho.setText("Total  Hours : "+sum_hours());
+                CALC();
+            });
+            na.setText(n);
+            lay.addView(v, lay.getChildCount());
+            v.setTag(lay.getChildCount() - 1);
+            LinearLayout rowLayout = v.findViewById(R.id.rowe);
+            rowLayout.setOnTouchListener(new View.OnTouchListener() {
+                private GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                        if(!isSelectionModeEnabled)
+                        {
+                            removeRowWithAnimation(v, e2.getX() > e1.getX());
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    public void onLongPress(MotionEvent e) {
+                        if(!isSelectionModeEnabled){
+                            enableSelectionMode(v);
+
+                        }else{
+                            disableSelectionMode();
+                        }
+                    }
+                });
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    gestureDetector.onTouchEvent(event);
+                    return true;
+                }
+            });
+        }catch (Exception ignored ){}
     }
     private void removeRowWithAnimation(@NonNull final View view, final boolean swipeRight) {try{
         final int defaultBackgroundColor = view.getSolidColor();

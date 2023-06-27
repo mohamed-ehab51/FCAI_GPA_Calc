@@ -37,6 +37,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import android.view.Window;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     Dictionary<String, Double> dict = new Hashtable<>();
     TextView no ;
     ArrayList<Subject> data=new ArrayList<>();
+    ArrayList<Subject> throwdata=new ArrayList<>();
     private boolean isSelectionModeEnabled;
     private ArrayList<Vie> vies=new ArrayList<>();
 
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main);
             Window window = this.getWindow();
             isSelectionModeEnabled=false;
+            throwdata.clear();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this,R.color.indigo));
@@ -109,11 +112,31 @@ public class MainActivity extends AppCompatActivity {
             });
             add.setOnClickListener(v -> addrow());
             session.setOnClickListener(v -> {
-                Intent intent = new Intent( getApplicationContext(),Sessions.class);
-                startActivity(intent);
+                d.setContentView(R.layout.draftdialog);
+                d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                Button yes= d.findViewById(R.id.button3);
+                Button no= d.findViewById(R.id.button);
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        collectall();
+                        d.dismiss();
+                        Intent intent = new Intent( getApplicationContext(),Sessions.class);
+                        intent.putParcelableArrayListExtra("data",throwdata);
+                        startActivity(intent);
+                    }
+                });
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.dismiss();
+                        Intent intent = new Intent( getApplicationContext(),Sessions.class);
+                        startActivity(intent);
+                    }
+                });
+                d.show();
+
             });
-
-
             dict.put("A+", 4.0);
             dict.put("A", 3.7);
             dict.put("B+", 3.3);
@@ -140,16 +163,32 @@ public class MainActivity extends AppCompatActivity {
             Vie a= new Vie(m,f);
             vies.add(a);
             more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
-            add.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
-            add.show();
+            info.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
+            info.show();
 
-            add.setOnClickListener(new View.OnClickListener() {
+            info.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     disableSelectionMode();
                 }
             });
-            info.hide();
+            add.setImageDrawable(getDrawable(R.drawable.baseline_content_copy_24));
+            add.show();
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(vies.size()!=0){
+                        collect();
+                        Intent intent = new Intent( getApplicationContext(),Sessions.class);
+                        intent.putParcelableArrayListExtra("data",throwdata);
+                        startActivity(intent);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(),"Please choose at least one subject",Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
             session.hide();
             closed=true;
             more.setOnClickListener(v -> {
@@ -200,10 +239,24 @@ public class MainActivity extends AppCompatActivity {
             isSelectionModeEnabled = false;
             more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
             add.hide();
+            info.hide();
+            info.setOnClickListener(v-> {
+                d.setContentView(R.layout.delete_tutorial);
+                d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                Button b= d.findViewById(R.id.button);
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.dismiss();
+                    }
+                });
+                d.show();
+            });
             add.setOnClickListener(v -> addrow());
             more.setOnClickListener(v -> {
                 if (closed)
                 {
+                    info.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
                     add.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
                     add.show();
                     info.show();
@@ -448,6 +501,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sh = getSharedPreferences("GG", MODE_PRIVATE);
             int Count=sh.getInt("Count",0);
             String def=sh.getString("GPA","");
+            throwdata.clear();
             if(!def.equals(""))
             {double gp=Double.parseDouble(def);
                 G.setText("GPA : "+gp);}
@@ -490,6 +544,61 @@ public class MainActivity extends AppCompatActivity {
                 if(Hours.getText().toString().equals("")){myEdit.putInt("Hours"+i,-1);}else{myEdit.putInt("Hours"+i,adapter.getPosition(Hours.getText().toString()));}
                 if(grade.getText().toString().equals("")){myEdit.putInt("Grade"+i, -1);}else{myEdit.putInt("Grade"+i,adapt.getPosition(grade.getText().toString()));}
                 myEdit.apply();
+            }
+        }catch (Exception ignored){}
+    }
+
+    void collect(){
+        try {
+            for (int i = 0; i < vies.size(); i++) {
+                View v = vies.get(i).vi;
+                Subject sub = new Subject();
+                EditText name = v.findViewById(R.id.editTextText3);
+                AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
+                AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
+                if (name.getText().toString().equals("")) {
+                    sub.name = "";
+                } else {
+                    sub.name = name.getText().toString();
+                }
+                if (grade.getText().toString().equals("")) {
+                    sub.grade = -1.0;
+                } else {
+                    sub.grade = Double.valueOf(adapt.getPosition(grade.getText().toString()));
+                }
+                if (Hours.getText().toString().equals("")) {
+                    sub.hours = -1;
+                } else {
+                    sub.hours = adapter.getPosition(Hours.getText().toString());
+                }
+                throwdata.add(sub);
+            }
+        }catch (Exception ignored){}
+    }
+    void collectall(){
+        try {
+            for (int i = 0; i < lay.getChildCount(); i++) {
+                View v = lay.getChildAt(i);
+                Subject sub = new Subject();
+                EditText name = v.findViewById(R.id.editTextText3);
+                AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
+                AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
+                if (name.getText().toString().equals("")) {
+                    sub.name = "";
+                } else {
+                    sub.name = name.getText().toString();
+                }
+                if (grade.getText().toString().equals("")) {
+                    sub.grade = -1.0;
+                } else {
+                    sub.grade = Double.valueOf(adapt.getPosition(grade.getText().toString()));
+                }
+                if (Hours.getText().toString().equals("")) {
+                    sub.hours = -1;
+                } else {
+                    sub.hours = adapter.getPosition(Hours.getText().toString());
+                }
+                throwdata.add(sub);
             }
         }catch (Exception ignored){}
     }
