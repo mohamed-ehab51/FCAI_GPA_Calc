@@ -5,11 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/_54sdp">
 
-    <View
-        android:id="@+id/overlay"
+    <Button
+        android:id="@+id/button2"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent" />
+        android:layout_height="@dimen/_54sdp"
+        android:visibility="gone" />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rowe"
@@ -98,13 +100,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="0" />
 
-    <CheckBox
-        android:id="@+id/checkBox2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:visibility="gone" />
-
-</LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
 
