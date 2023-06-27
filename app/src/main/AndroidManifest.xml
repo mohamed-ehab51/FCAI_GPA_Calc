@@ -24,12 +24,13 @@
             android:name=".Sessions"
             android:screenOrientation="sensor"
             android:configChanges="orientation|screenSize"
-
             android:exported="false">
 
         </activity>
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="sensor"
+            android:configChanges="orientation|screenSize"
             android:exported="false">
         </activity>
 

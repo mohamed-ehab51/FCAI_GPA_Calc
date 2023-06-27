@@ -15,11 +15,11 @@
         android:paddingTop="@dimen/_1sdp">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="@color/white"
             android:gravity="center"
+            android:textColor="@color/white"
             android:textSize="16sp" />
 
         <Space
@@ -43,8 +43,8 @@
             android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/textView4"
-            android:layout_width="@dimen/_100sdp"
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:textColor="@color/white"
@@ -52,6 +52,7 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/scrl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/_27sdp"

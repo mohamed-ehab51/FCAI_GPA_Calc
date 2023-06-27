@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.GestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,11 +33,14 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -49,9 +52,12 @@ public class Sessions extends AppCompatActivity {
     ArrayList<Subject> data=new ArrayList<>();
     TextView G ;
     TextView Ho ;
+    private ArrayList<Vie> vies=new ArrayList<>();
     String[] grades = {"A+", "A", "B+", "B", "C+", "C", "D+", "D", "F"};
     String[] Hours = {"0","2","3","6"};
     AutoCompleteTextView aut;
+    private boolean isSelectionModeEnabled;
+    private ArrayList<View> selectedRows = new ArrayList<>();
     LinearLayout lay;
     Dialog d;
     AutoCompleteTextView H;
@@ -67,6 +73,7 @@ public class Sessions extends AppCompatActivity {
         setContentView(R.layout.sessions);
         no=findViewById(R.id.textView2);
         Window window = this.getWindow();
+        isSelectionModeEnabled=false;
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.indigo));
@@ -120,6 +127,75 @@ public class Sessions extends AppCompatActivity {
         Ho.setText("Total  Hours : "+sum_hours());
         G.setText("GPA : "+0.0);
     }
+    private void enableSelectionMode() {
+        isSelectionModeEnabled = true;
+        more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
+        add.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
+        add.show();
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disableSelectionMode();
+            }
+        });
+        info.hide();
+        closed=true;
+        more.setOnClickListener(v -> {
+            for(int i=0;i<selectedRows.size();i++)
+            {
+                removeRowWithAnimation(selectedRows.get(i),false);
+            }
+        });
+        // Show the checkboxes for all rows
+        for (int i = 0; i < lay.getChildCount(); i++) {
+            View row = lay.getChildAt(i);
+            CheckBox checkBox = row.findViewById(R.id.checkBox);
+            checkBox.setVisibility(View.VISIBLE);
+            checkBox.setChecked(false);
+            TextInputLayout t= row.findViewById(R.id.editTextText1);
+            TextInputLayout t1= row.findViewById(R.id.editTextText);
+            EditText t3= row.findViewById(R.id.editTextText3);
+            t3.setEnabled(false);
+            t.setEnabled(false);
+            t1.setEnabled(false);
+        }
+    }
+
+    private void disableSelectionMode() {
+        isSelectionModeEnabled = false;
+        more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
+        add.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
+        add.setOnClickListener(v -> addrow());
+        add.hide();
+        more.setOnClickListener(v -> {
+            if (closed)
+            {
+                add.show();
+                info.show();
+                closed=false;
+            }
+            else {
+                add.hide();
+                info.hide();
+                closed=true;
+            }
+        });
+        // Hide the checkboxes for all rows
+        for (int i = 0; i < lay.getChildCount(); i++) {
+            View row = lay.getChildAt(i);
+            CheckBox checkBox = row.findViewById(R.id.checkBox);
+            checkBox.setVisibility(View.GONE);
+            checkBox.setChecked(false);
+            TextInputLayout t= row.findViewById(R.id.editTextText1);
+            TextInputLayout t1= row.findViewById(R.id.editTextText);
+            EditText t3= row.findViewById(R.id.editTextText3);
+            t3.setEnabled(true);
+            t.setEnabled(true);
+            t1.setEnabled(true);
+        }
+        // Clear the selected rows list
+        vies.clear();
+    }
     private void addrow() {
         View v=getLayoutInflater().inflate(R.layout.row,null,false);
         aut = v.findViewById(R.id.autoCompleteTextView2);
@@ -127,6 +203,16 @@ public class Sessions extends AppCompatActivity {
         H = v.findViewById(R.id.autoCompleteTextView20);
         H.setKeyListener(null);
         aut.setKeyListener(null);
+        CheckBox checkBox = v.findViewById(R.id.checkBox);
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            int k=(int)v.getTag();
+            Vie Q= new Vie(v,k);
+            if (isChecked) {
+                vies.add(Q);
+            } else {
+                vies.remove(Q);
+            }
+        });
         adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -144,20 +230,6 @@ public class Sessions extends AppCompatActivity {
                 return view;
             }
         };
-        TextWatcher textWatcher = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-                onPause();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-            }
-        };
-        na.addTextChangedListener(textWatcher);
         adapter = new ArrayAdapter<String>(this, R.layout.drop, Hours) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -178,12 +250,10 @@ public class Sessions extends AppCompatActivity {
         aut.setAdapter(adapt);
         aut.setOnItemClickListener((parent, view, position, id) -> {
             CALC();
-            onPause();
         });H.setAdapter(adapter);
         H.setOnItemClickListener((parent, view, position, id) -> {
             Ho.setText("Total  Hours : "+sum_hours());
             CALC();
-            onPause();
         });
         lay.addView(v, lay.getChildCount());
         v.setTag(lay.getChildCount() - 1);
@@ -196,12 +266,35 @@ public class Sessions extends AppCompatActivity {
             }
         });
 
-        rowLayout.setOnTouchListener((v1, event) -> {
-            gestureDetector.onTouchEvent(event);
-            return true;
+        rowLayout.setOnTouchListener(new View.OnTouchListener() {
+            private GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    if(!isSelectionModeEnabled)
+                    {
+                        removeRowWithAnimation(v, e2.getX() > e1.getX());
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    if(!isSelectionModeEnabled){
+                        enableSelectionMode();
+
+                    }else{
+                        disableSelectionMode();
+                    }
+                }
+            });
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
         });
         no.setText("  No. Courses : "+lay.getChildCount());
-        onPause();
     }
     private int sum_hours() {
         int sum = 0;
@@ -247,7 +340,6 @@ public class Sessions extends AppCompatActivity {
                 Ho.setText("Total  Hours : "+sum_hours());
                 no.setText("  No. Courses : "+lay.getChildCount());
                 CALC();
-                onPause();
             }
 
             @Override
@@ -290,8 +382,9 @@ public class Sessions extends AppCompatActivity {
         }
     }
     private void undoRowDeletion(View deletedView, final int originalIndex) {
+        if(!isSelectionModeEnabled)
+        {
         lay.removeView(deletedView);
-
         // Add the undeleted view back to its original position
         final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
         redOverlay.setVisibility(View.GONE);
@@ -301,8 +394,35 @@ public class Sessions extends AppCompatActivity {
         Ho.setText("Total  Hours : "+sum_hours());
         no.setText("  No. Courses : "+lay.getChildCount());
         CALC();
-        onPause();
+        }
+        else{
 
+            sortVieList(vies);
+            for(int i=0;i<vies.size();i++)
+            {
+                int j=vies.get(i).place;
+                View de=vies.get(i).vi;
+                lay.removeView(de);
+                final ImageView redOverlay = de.findViewById(R.id.imageView);
+                redOverlay.setVisibility(View.GONE);
+                final ImageView redOverlay2 = de.findViewById(R.id.sora);
+                redOverlay2.setVisibility(View.GONE);
+                lay.addView(de, j);
+            }
+            Ho.setText("Total  Hours : "+sum_hours());
+            no.setText("  No. Courses : "+lay.getChildCount());
+            CALC();
+        }
+
+    }
+    public static void sortVieList(ArrayList<Vie> vieList) {
+        // Use a custom Comparator to compare the 'place' property
+        Collections.sort(vieList, new Comparator<Vie>() {
+            @Override
+            public int compare(Vie vie1, Vie vie2) {
+                return Integer.compare(vie1.getPlace(), vie2.getPlace());
+            }
+        });
     }
     private double CALC() {
         data.clear();

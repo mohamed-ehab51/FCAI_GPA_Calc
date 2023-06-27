@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,21 +25,27 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -51,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     Dictionary<String, Double> dict = new Hashtable<>();
     TextView no ;
     ArrayList<Subject> data=new ArrayList<>();
+    private boolean isSelectionModeEnabled;
+    private ArrayList<Vie> vies=new ArrayList<>();
+
     TextView G ;
     Dialog d;
     TextView Ho ;
@@ -69,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Window window = this.getWindow();
+        isSelectionModeEnabled=false;
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.indigo));
@@ -127,6 +138,300 @@ public class MainActivity extends AppCompatActivity {
         dict.put("F", 0.0);
         Ho.setText("Total  Hours : "+sum_hours());
         G.setText("GPA : "+0.0);
+    }
+    private void enableSelectionMode() {
+        isSelectionModeEnabled = true;
+        more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
+        add.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
+        add.show();
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disableSelectionMode();
+            }
+        });
+        info.hide();
+        session.hide();
+        closed=true;
+        more.setOnClickListener(v -> {
+            for(int i=0;i<vies.size();i++)
+            {
+                removeRowWithAnimation(vies.get(i).vi,false);
+            }
+        });
+        // Show the checkboxes for all rows
+        for (int i = 0; i < lay.getChildCount(); i++) {
+            View row = lay.getChildAt(i);
+            CheckBox checkBox = row.findViewById(R.id.checkBox);
+            checkBox.setVisibility(View.VISIBLE);
+            checkBox.setChecked(false);
+            TextInputLayout t= row.findViewById(R.id.editTextText1);
+            TextInputLayout t1= row.findViewById(R.id.editTextText);
+            EditText t3= row.findViewById(R.id.editTextText3);
+            t3.setEnabled(false);
+            t.setEnabled(false);
+            t1.setEnabled(false);
+        }
+    }
+
+    private void disableSelectionMode() {
+        isSelectionModeEnabled = false;
+        more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
+        add.hide();
+        add.setOnClickListener(v -> addrow());
+        more.setOnClickListener(v -> {
+            if (closed)
+            {
+                add.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
+                add.show();
+                info.show();
+                session.show();
+                closed=false;
+            }
+            else {
+                add.hide();
+                info.hide();
+                session.hide();
+                closed=true;
+            }
+        });
+        // Hide the checkboxes for all rows
+        for (int i = 0; i < lay.getChildCount(); i++) {
+            View row = lay.getChildAt(i);
+            CheckBox checkBox = row.findViewById(R.id.checkBox);
+            checkBox.setVisibility(View.GONE);
+            checkBox.setChecked(false);
+            TextInputLayout t= row.findViewById(R.id.editTextText1);
+            TextInputLayout t1= row.findViewById(R.id.editTextText);
+            EditText t3= row.findViewById(R.id.editTextText3);
+            t3.setEnabled(true);
+            t.setEnabled(true);
+            t1.setEnabled(true);
+        }
+        vies.clear();
+    }
+
+    private void addrow() {
+        View v=getLayoutInflater().inflate(R.layout.row,null,false);
+        aut = v.findViewById(R.id.autoCompleteTextView2);
+        na=v.findViewById(R.id.editTextText3);
+        H = v.findViewById(R.id.autoCompleteTextView20);
+        H.setKeyListener(null);
+        aut.setKeyListener(null);
+        CheckBox checkBox = v.findViewById(R.id.checkBox);
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                int k=(int)v.getTag();
+                Vie Q= new Vie(v,k);
+            if (isChecked) {
+                vies.add(Q);
+            } else {
+                vies.remove(Q);
+            }
+        });
+        adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(grades[position]);
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(grades[position]);
+                return view;
+            }
+        };
+        TextWatcher textWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                onPause();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+            }
+        };
+        na.addTextChangedListener(textWatcher);
+        adapter = new ArrayAdapter<String>(this, R.layout.drop, Hours) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(Hours[position]);
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(Hours[position]);
+                return view;
+            }
+        };
+        aut.setAdapter(adapt);
+        aut.setOnItemClickListener((parent, view, position, id) -> {
+            CALC();
+            onPause();
+        });H.setAdapter(adapter);
+        H.setOnItemClickListener((parent, view, position, id) -> {
+            Ho.setText("Total  Hours : "+sum_hours());
+            CALC();
+            onPause();
+        });
+        lay.addView(v, lay.getChildCount());
+        v.setTag(lay.getChildCount() - 1);
+        LinearLayout rowLayout = v.findViewById(R.id.rowe);
+        rowLayout.setOnTouchListener(new View.OnTouchListener() {
+            private GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    if(!isSelectionModeEnabled)
+                    {
+                        removeRowWithAnimation(v, e2.getX() > e1.getX());
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    if(!isSelectionModeEnabled){
+                    enableSelectionMode();
+
+                    }else{
+                        disableSelectionMode();
+                    }
+                }
+            });
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+
+        });
+        no.setText("  No. Courses : "+lay.getChildCount());
+        onPause();
+    }
+    private void retrieve_row(String n,int h,int g) {
+        View v=getLayoutInflater().inflate(R.layout.row,null,false);
+        na=v.findViewById(R.id.editTextText3);
+        aut = v.findViewById(R.id.autoCompleteTextView2);
+        H = v.findViewById(R.id.autoCompleteTextView20);
+        H.setKeyListener(null);
+        aut.setKeyListener(null);
+        CheckBox checkBox = v.findViewById(R.id.checkBox);
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            int k=(int)v.getTag();
+            Vie Q= new Vie(v,k);
+            if (isChecked) {
+                vies.add(Q);
+            } else {
+                vies.remove(Q);
+            }
+        });
+        adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(grades[position]);
+                return view;
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(grades[position]);
+                return view;
+            }
+        };
+        adapter = new ArrayAdapter<String>(this, R.layout.drop, Hours) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(Hours[position]);
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText(Hours[position]);
+                return view;
+            }
+        };
+
+
+        TextWatcher textWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                onPause();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+            }
+        };
+        na.addTextChangedListener(textWatcher);
+        if(h!=-1){H.setText(adapter.getItem(h));}
+        if(g!=-1){aut.setText(adapt.getItem(g));}
+        aut.setAdapter(adapt);
+        aut.setOnItemClickListener((parent, view, position, id) -> {
+            CALC();
+            onPause();
+        });H.setAdapter(adapter);
+        H.setOnItemClickListener((parent, view, position, id) -> {
+            Ho.setText("Total  Hours : "+sum_hours());
+            CALC();
+            onPause();
+        });
+        na.setText(n);
+        lay.addView(v, lay.getChildCount());
+        v.setTag(lay.getChildCount() - 1);
+        LinearLayout rowLayout = v.findViewById(R.id.rowe);
+        rowLayout.setOnTouchListener(new View.OnTouchListener() {
+            private GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    if(!isSelectionModeEnabled)
+                    {
+                        removeRowWithAnimation(v, e2.getX() > e1.getX());
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    if(!isSelectionModeEnabled){
+                        enableSelectionMode();
+
+                    }else{
+                        disableSelectionMode();
+                    }
+                }
+            });
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -191,90 +496,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void addrow() {
-        View v=getLayoutInflater().inflate(R.layout.row,null,false);
-        aut = v.findViewById(R.id.autoCompleteTextView2);
-        na=v.findViewById(R.id.editTextText3);
-        H = v.findViewById(R.id.autoCompleteTextView20);
-        H.setKeyListener(null);
-        aut.setKeyListener(null);
-        adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(grades[position]);
-                return view;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(grades[position]);
-                return view;
-            }
-        };
-        TextWatcher textWatcher = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-                onPause();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-            }
-        };
-        na.addTextChangedListener(textWatcher);
-        adapter = new ArrayAdapter<String>(this, R.layout.drop, Hours) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(Hours[position]);
-                return view;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(Hours[position]);
-                return view;
-            }
-        };
-        aut.setAdapter(adapt);
-        aut.setOnItemClickListener((parent, view, position, id) -> {
-            CALC();
-            onPause();
-        });H.setAdapter(adapter);
-        H.setOnItemClickListener((parent, view, position, id) -> {
-            Ho.setText("Total  Hours : "+sum_hours());
-            CALC();
-            onPause();
-        });
-        lay.addView(v, lay.getChildCount());
-        v.setTag(lay.getChildCount() - 1);
-        LinearLayout rowLayout = v.findViewById(R.id.rowe);
-        GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                removeRowWithAnimation(v, e2.getX() > e1.getX());
-                return true;
-            }
-        });
-
-        rowLayout.setOnTouchListener((v1, event) -> {
-            gestureDetector.onTouchEvent(event);
-            return true;
-        });
-        no.setText("  No. Courses : "+lay.getChildCount());
-        onPause();
-    }
     private int sum_hours() {
         int sum = 0;
         for (int i=0;i<lay.getChildCount();i++)
@@ -287,92 +508,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return sum;
-    }
-    private void retrieve_row(String n,int h,int g) {
-        View v=getLayoutInflater().inflate(R.layout.row,null,false);
-        na=v.findViewById(R.id.editTextText3);
-        aut = v.findViewById(R.id.autoCompleteTextView2);
-        H = v.findViewById(R.id.autoCompleteTextView20);
-        H.setKeyListener(null);
-        aut.setKeyListener(null);
-        adapt = new ArrayAdapter<String>(this, R.layout.drop, grades) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(grades[position]);
-                return view;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(grades[position]);
-                return view;
-            }
-        };
-        adapter = new ArrayAdapter<String>(this, R.layout.drop, Hours) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(Hours[position]);
-                return view;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView textView = view.findViewById(android.R.id.text1);
-                textView.setText(Hours[position]);
-                return view;
-            }
-        };
-
-
-        TextWatcher textWatcher = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-                onPause();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-            }
-        };
-        na.addTextChangedListener(textWatcher);
-        if(h!=-1){H.setText(adapter.getItem(h));}
-        if(g!=-1){aut.setText(adapt.getItem(g));}
-        aut.setAdapter(adapt);
-        aut.setOnItemClickListener((parent, view, position, id) -> {
-            CALC();
-            onPause();
-        });H.setAdapter(adapter);
-        H.setOnItemClickListener((parent, view, position, id) -> {
-            Ho.setText("Total  Hours : "+sum_hours());
-            CALC();
-            onPause();
-        });
-        na.setText(n);
-        lay.addView(v, lay.getChildCount());
-        v.setTag(lay.getChildCount() - 1);
-        LinearLayout rowLayout = v.findViewById(R.id.rowe);
-            GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                    removeRowWithAnimation(v, e2.getX() > e1.getX());
-                    return true;
-                }
-            });
-
-        rowLayout.setOnTouchListener((v1, event) -> {
-            gestureDetector.onTouchEvent(event);
-            return true;
-        });
     }
 
     private void removeRowWithAnimation(@NonNull final View view, final boolean swipeRight) {
@@ -433,20 +568,52 @@ public class MainActivity extends AppCompatActivity {
             snackbar.show();}
     }
     private void undoRowDeletion(View deletedView, final int originalIndex) {
-        lay.removeView(deletedView);
+        if(!isSelectionModeEnabled)
+        {
+            lay.removeView(deletedView);
+            // Add the undeleted view back to its original position
+            final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
+            redOverlay.setVisibility(View.GONE);
+            final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
+            redOverlay2.setVisibility(View.GONE);
+            lay.addView(deletedView, originalIndex);
+            Ho.setText("Total  Hours : "+sum_hours());
+            no.setText("  No. Courses : "+lay.getChildCount());
+            CALC();
+            onPause();
+        }
+        else{
 
-        // Add the undeleted view back to its original position
-        final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
-        redOverlay.setVisibility(View.GONE);
-        final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
-        redOverlay2.setVisibility(View.GONE);
-        lay.addView(deletedView, originalIndex);
-        Ho.setText("Total  Hours : "+sum_hours());
-        no.setText("  No. Courses : "+lay.getChildCount());
-        CALC();
-        onPause();
+            sortVieList(vies);
+            for(int i=0;i<vies.size();i++)
+            {
+                int j=vies.get(i).place;
+                View de=vies.get(i).vi;
+                lay.removeView(de);
+                final ImageView redOverlay = de.findViewById(R.id.imageView);
+                redOverlay.setVisibility(View.GONE);
+                final ImageView redOverlay2 = de.findViewById(R.id.sora);
+                redOverlay2.setVisibility(View.GONE);
+                lay.addView(de, j);
+            }
+            Ho.setText("Total  Hours : "+sum_hours());
+            no.setText("  No. Courses : "+lay.getChildCount());
+            CALC();
+            onPause();
+        }
+
 
     }
+    public static void sortVieList(ArrayList<Vie> vieList) {
+        // Use a custom Comparator to compare the 'place' property
+        Collections.sort(vieList, new Comparator<Vie>() {
+            @Override
+            public int compare(Vie vie1, Vie vie2) {
+                return Integer.compare(vie1.getPlace(), vie2.getPlace());
+            }
+        });
+    }
+
     private double CALC() {
         data.clear();
         if(lay.getChildCount()!=0)
