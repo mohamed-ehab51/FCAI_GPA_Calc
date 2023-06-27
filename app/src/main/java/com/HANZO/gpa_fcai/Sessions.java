@@ -180,7 +180,6 @@ public class Sessions extends AppCompatActivity {
                     }
                 }
             });
-
         }
         z.setBackgroundColor(color);
     }catch (Exception ignored){}}

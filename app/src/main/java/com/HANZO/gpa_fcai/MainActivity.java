@@ -226,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-
             }
             z.setBackgroundColor(color);
         }catch (Exception ignored){}
