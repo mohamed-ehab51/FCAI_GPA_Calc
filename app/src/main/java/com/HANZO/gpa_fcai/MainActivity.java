@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             G=findViewById(R.id.textView3);
             Ho=findViewById(R.id.textView4);
             lay=findViewById(R.id.linearLayout1);
-            no.setText("  No. Courses : "+lay.getChildCount());
+            no.setText("No. Courses : "+lay.getChildCount());
             more = findViewById(R.id.butt);
             add = findViewById(R.id.add);
             info = findViewById(R.id.infodel);
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             Button z= m.findViewById(R.id.button2);
             z.setVisibility(View.VISIBLE);
             z.setTextColor(Color.WHITE);
-            z.setText("selected");
+            z.setText("✓");
             int f=(int)m.getTag();
             Vie a= new Vie(m,f);
             vies.add(a);
@@ -177,16 +177,10 @@ public class MainActivity extends AppCompatActivity {
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(vies.size()!=0){
                         collect();
                         Intent intent = new Intent( getApplicationContext(),Sessions.class);
                         intent.putParcelableArrayListExtra("data",throwdata);
                         startActivity(intent);
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(),"Please choose at least one subject",Toast.LENGTH_SHORT).show();
-                    }
-
                 }
             });
             session.hide();
@@ -211,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             b.setBackgroundColor(color);
                             b.setTextColor(Color.WHITE);
-                            b.setText("selected");
+                            b.setText("✓");
                             vies.add(Q);
                         }
                         else
@@ -223,6 +217,10 @@ public class MainActivity extends AppCompatActivity {
                                 if ((k==b.getPlace())&& row.equals(b.getVi()))
                                 {
                                     l.remove();
+                                    if(vies.size()==0)
+                                    {
+                                        disableSelectionMode();
+                                    }
                                 }
                             }
                         }
@@ -385,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             });
-            no.setText("  No. Courses : "+lay.getChildCount());
+            no.setText("No. Courses : "+lay.getChildCount());
             onPause();
         }catch (Exception ignored){}
     }
@@ -519,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     retrieve_row(n,h,g);
                 }
-                no.setText("  No. Courses : "+lay.getChildCount());
+                no.setText("No. Courses : "+lay.getChildCount());
                 Ho.setText("Total  Hours : "+sum_hours());
             }
         }catch (Exception ignored){}
@@ -662,7 +660,7 @@ public class MainActivity extends AppCompatActivity {
                    view.setBackgroundColor(defaultBackgroundColor);
                    showUndoOption(view,originalIndex);
                    Ho.setText("Total  Hours : "+sum_hours());
-                   no.setText("  No. Courses : "+lay.getChildCount());
+                   no.setText("No. Courses : "+lay.getChildCount());
                    CALC();
                    onPause();
                }
@@ -702,7 +700,7 @@ public class MainActivity extends AppCompatActivity {
                 redOverlay2.setVisibility(View.GONE);
                 lay.addView(deletedView, originalIndex);
                 Ho.setText("Total  Hours : " + sum_hours());
-                no.setText("  No. Courses : " + lay.getChildCount());
+                no.setText("No. Courses : " + lay.getChildCount());
                 CALC();
                 onPause();
             } else {
@@ -719,7 +717,7 @@ public class MainActivity extends AppCompatActivity {
                     lay.addView(de, j);
                 }
                 Ho.setText("Total  Hours : " + sum_hours());
-                no.setText("  No. Courses : " + lay.getChildCount());
+                no.setText("No. Courses : " + lay.getChildCount());
                 CALC();
                 onPause();
             }

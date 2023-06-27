@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.GestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +40,7 @@ public class Sessions extends AppCompatActivity {
     ArrayList<Subject> data=new ArrayList<>();
     TextView G ;
     TextView Ho ;
-    private ArrayList<Vie> vies=new ArrayList<>();
+    private final ArrayList<Vie> vies=new ArrayList<>();
     String[] grades = {"A+", "A", "B+", "B", "C+", "C", "D+", "D", "F"};
     String[] Hours = {"0","2","3","6"};
     AutoCompleteTextView aut;
@@ -53,7 +51,6 @@ public class Sessions extends AppCompatActivity {
     EditText na;
     ArrayAdapter<String> adapt;
     ArrayAdapter<String> adapter;
-    private ArrayList<Subject> coming=new ArrayList<>();
 
     FloatingActionButton more,add,info;
     Button back;
@@ -70,28 +67,20 @@ public class Sessions extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this,R.color.indigo));
             G=findViewById(R.id.textView3);
-            //coming=getIntent().getStringArrayListExtra("data");
             Ho=findViewById(R.id.textView4);
             lay=findViewById(R.id.linearLayout1);
-            no.setText("  No. Courses : "+lay.getChildCount());
+            no.setText("No. Courses : "+lay.getChildCount());
             more = findViewById(R.id.butt);
             add = findViewById(R.id.add);
             back = findViewById(R.id.back_button);
-            back.setOnClickListener(v->{
-                finish();
-            });
+            back.setOnClickListener(v-> finish());
             d=new Dialog(this);
             info = findViewById(R.id.infodel);
             info.setOnClickListener(v-> {
                 d.setContentView(R.layout.delete_tutorial);
                 d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 Button b= d.findViewById(R.id.button);
-                b.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        d.dismiss();
-                    }
-                });
+                b.setOnClickListener(v1 -> d.dismiss());
                 d.show();
             });
             more.setOnClickListener(v -> {
@@ -120,14 +109,14 @@ public class Sessions extends AppCompatActivity {
             Ho.setText("Total  Hours : "+sum_hours());
             G.setText("GPA : "+0.0);
             try {
-                coming= getIntent().getParcelableArrayListExtra("data");
+                ArrayList<Subject> coming = getIntent().getParcelableArrayListExtra("data");
                 if(coming.size()!=0)
                 {
-                    for (int i=0;i<coming.size();i++)
+                    for (int i = 0; i< coming.size(); i++)
                     {
                         Double fd = coming.get(i).grade;
                         int intValue = (int) Math.round(fd);
-                        retrieve_row(coming.get(i).name,coming.get(i).hours,intValue);
+                        retrieve_row(coming.get(i).name, coming.get(i).hours,intValue);
                     }
                     no.setText("  No. Courses : "+lay.getChildCount());
                     Ho.setText("Total  Hours : "+sum_hours());
@@ -143,19 +132,14 @@ public class Sessions extends AppCompatActivity {
         Button z= m.findViewById(R.id.button2);
         z.setVisibility(View.VISIBLE);
         z.setTextColor(Color.WHITE);
-        z.setText("selected");
+        z.setText("✓");
         int f=(int)m.getTag();
         Vie a= new Vie(m,f);
         vies.add(a);
         more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
         add.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
         add.show();
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                disableSelectionMode();
-            }
-        });
+        add.setOnClickListener(v -> disableSelectionMode());
         info.hide();
         closed=true;
         more.setOnClickListener(v -> {
@@ -164,33 +148,33 @@ public class Sessions extends AppCompatActivity {
                 removeRowWithAnimation(vies.get(i).vi,false);
             }
         });
-        // Show the checkboxes for all rows
         for (int i = 0; i < lay.getChildCount(); i++) {
             View row = lay.getChildAt(i);
             Button b= row.findViewById(R.id.button2);
             b.setBackgroundColor(Color.TRANSPARENT);
             b.setVisibility(View.VISIBLE);
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int k=(int)row.getTag();
-                    Vie Q= new Vie(row,k);
-                    if(b.getText().equals(""))
-                    {
-                        b.setBackgroundColor(color);
-                        b.setTextColor(Color.WHITE);
-                        b.setText("selected");
-                        vies.add(Q);
-                    }
-                    else
-                    {
-                        b.setBackgroundColor(Color.TRANSPARENT);
-                        b.setText("");
-                        for (Iterator<Vie> l = vies.iterator(); l.hasNext();) {
-                            Vie b = l.next();
-                            if ((k==b.getPlace())&& row.equals(b.getVi()))
+            b.setOnClickListener(v -> {
+                int k=(int)row.getTag();
+                Vie Q= new Vie(row,k);
+                if(b.getText().equals(""))
+                {
+                    b.setBackgroundColor(color);
+                    b.setTextColor(Color.WHITE);
+                    b.setText("✓");
+                    vies.add(Q);
+                }
+                else
+                {
+                    b.setBackgroundColor(Color.TRANSPARENT);
+                    b.setText("");
+                    for (Iterator<Vie> l = vies.iterator(); l.hasNext();) {
+                        Vie b1 = l.next();
+                        if ((k== b1.getPlace())&& row.equals(b1.getVi()))
+                        {
+                            l.remove();
+                            if(vies.size()==0)
                             {
-                                l.remove();
+                                disableSelectionMode();
                             }
                         }
                     }
@@ -278,9 +262,7 @@ public class Sessions extends AppCompatActivity {
             }
         };
         aut.setAdapter(adapt);
-        aut.setOnItemClickListener((parent, view, position, id) -> {
-            CALC();
-        });H.setAdapter(adapter);
+        aut.setOnItemClickListener((parent, view, position, id) -> CALC());H.setAdapter(adapter);
         H.setOnItemClickListener((parent, view, position, id) -> {
             Ho.setText("Total  Hours : "+sum_hours());
             CALC();
@@ -288,13 +270,6 @@ public class Sessions extends AppCompatActivity {
         lay.addView(v, lay.getChildCount());
         v.setTag(lay.getChildCount() - 1);
         LinearLayout rowLayout = v.findViewById(R.id.rowe);
-        GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                removeRowWithAnimation(v, e2.getX() > e1.getX());
-                return true;
-            }
-        });
 
         rowLayout.setOnTouchListener(new View.OnTouchListener() {
             private GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
