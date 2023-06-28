@@ -271,7 +271,7 @@ public class Sessions extends AppCompatActivity {
         LinearLayout rowLayout = v.findViewById(R.id.rowe);
 
         rowLayout.setOnTouchListener(new View.OnTouchListener() {
-            private GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
+            private final GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                     if(!isSelectionModeEnabled)
@@ -360,9 +360,7 @@ public class Sessions extends AppCompatActivity {
             if(h!=-1){H.setText(adapter.getItem(h));}
             if(g!=-1){aut.setText(adapt.getItem(g));}
             aut.setAdapter(adapt);
-            aut.setOnItemClickListener((parent, view, position, id) -> {
-                CALC();
-            });H.setAdapter(adapter);
+            aut.setOnItemClickListener((parent, view, position, id) -> CALC());H.setAdapter(adapter);
             H.setOnItemClickListener((parent, view, position, id) -> {
                 Ho.setText("Total  Hours : "+sum_hours());
                 CALC();
@@ -372,7 +370,7 @@ public class Sessions extends AppCompatActivity {
             v.setTag(lay.getChildCount() - 1);
             LinearLayout rowLayout = v.findViewById(R.id.rowe);
             rowLayout.setOnTouchListener(new View.OnTouchListener() {
-                private GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
+                private final GestureDetector gestureDetector = new GestureDetector(Sessions.this, new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                         if(!isSelectionModeEnabled)
@@ -449,14 +447,16 @@ public class Sessions extends AppCompatActivity {
     private void showUndoOption(@NonNull final View deletedView, final int originalIndex) {try{
         EditText ed= deletedView.findViewById(R.id.editTextText3);
         String subname= ed.getText().toString();
-        if(subname.equals("")){Snackbar snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
-                .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
-            snackbar.show();
+        Snackbar snackbar;
+        if(subname.equals("")){
+            snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
+                    .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
         }
-        else{Snackbar snackbar = Snackbar.make(lay, "you deleted "+subname, Snackbar.LENGTH_LONG)
-                .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
-            snackbar.show();}
-
+        else{
+            snackbar = Snackbar.make(lay, "you deleted " + subname, Snackbar.LENGTH_LONG)
+                    .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
+        }
+        snackbar.show();
 
 
     }catch (Exception ignored){}}
@@ -466,6 +466,7 @@ public class Sessions extends AppCompatActivity {
             DecimalFormat decimalFormat = new DecimalFormat("#0.00", symbols);
             // Convert Arabic number string to a numeric value
             Number number = decimalFormat.parse(numberString);
+            assert number != null;
             return number.doubleValue();
         } catch (Exception e) {
             return 0.0;
@@ -481,9 +482,6 @@ public class Sessions extends AppCompatActivity {
             final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
             redOverlay2.setVisibility(View.GONE);
             lay.addView(deletedView, originalIndex);
-            Ho.setText("Total  Hours : "+sum_hours());
-            no.setText("  No. Courses : "+lay.getChildCount());
-            CALC();
         }
         else{
 
@@ -499,22 +497,17 @@ public class Sessions extends AppCompatActivity {
                 redOverlay2.setVisibility(View.GONE);
                 lay.addView(de, j);
             }
-            Ho.setText("Total  Hours : "+sum_hours());
-            no.setText("  No. Courses : "+lay.getChildCount());
-            CALC();
         }
+        Ho.setText("Total  Hours : "+sum_hours());
+        no.setText("  No. Courses : "+lay.getChildCount());
+        CALC();
 
     }catch (Exception ignored){}}
     public static void sortVieList(ArrayList<Vie> vieList) {try{
         // Use a custom Comparator to compare the 'place' property
-        Collections.sort(vieList, new Comparator<Vie>() {
-            @Override
-            public int compare(Vie vie1, Vie vie2) {
-                return Integer.compare(vie1.getPlace(), vie2.getPlace());
-            }
-        });
+        Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));
     }catch (Exception ignored){}}
-    private double CALC() {try{
+    private void CALC() {try{
         data.clear();
         if(lay.getChildCount()!=0)
         {
@@ -545,7 +538,7 @@ public class Sessions extends AppCompatActivity {
             DecimalFormat dec = new DecimalFormat("#0.00");
             Locale currentLocale = getResources().getConfiguration().locale;
             boolean isArabicLocale = currentLocale.getLanguage().equals("ar");
-            double gpa=0.0;
+            double gpa;
             if (isArabicLocale) {
                 gpa= parseArabicNumber(dec.format(res));
             } else {
@@ -555,11 +548,8 @@ public class Sessions extends AppCompatActivity {
                 gpa = 0.0;
             }
             G.setText("GPA : "+gpa);
-            return gpa;
         }
         G.setText("GPA : "+0.0);
-        return 0.0;
     }catch (Exception ignored){}
-        return 0.0;
     }
 }

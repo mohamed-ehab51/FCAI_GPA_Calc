@@ -1,7 +1,5 @@
 package com.HANZO.gpa_fcai;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,8 +9,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -23,21 +23,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.view.MotionEvent;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
-import android.view.Window;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Subject> data=new ArrayList<>();
     ArrayList<Subject> throwdata=new ArrayList<>();
     private boolean isSelectionModeEnabled;
-    private ArrayList<Vie> vies=new ArrayList<>();
+    private final ArrayList<Vie> vies=new ArrayList<>();
 
     TextView G ;
     Dialog d;
@@ -86,12 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 d.setContentView(R.layout.delete_tutorial);
                 d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 Button b= d.findViewById(R.id.button);
-                b.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        d.dismiss();
-                    }
-                });
+                b.setOnClickListener(v1 -> d.dismiss());
                 d.show();
             });
             session = findViewById(R.id.session);
@@ -116,23 +113,17 @@ public class MainActivity extends AppCompatActivity {
                 d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 Button yes= d.findViewById(R.id.button3);
                 Button no= d.findViewById(R.id.button);
-                yes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        collectall();
-                        d.dismiss();
-                        Intent intent = new Intent( getApplicationContext(),Sessions.class);
-                        intent.putParcelableArrayListExtra("data",throwdata);
-                        startActivity(intent);
-                    }
+                yes.setOnClickListener(v13 -> {
+                    collectall();
+                    d.dismiss();
+                    Intent intent = new Intent( getApplicationContext(),Sessions.class);
+                    intent.putParcelableArrayListExtra("data",throwdata);
+                    startActivity(intent);
                 });
-                no.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        d.dismiss();
-                        Intent intent = new Intent( getApplicationContext(),Sessions.class);
-                        startActivity(intent);
-                    }
+                no.setOnClickListener(v12 -> {
+                    d.dismiss();
+                    Intent intent = new Intent( getApplicationContext(),Sessions.class);
+                    startActivity(intent);
                 });
                 d.show();
 
@@ -166,22 +157,14 @@ public class MainActivity extends AppCompatActivity {
             info.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
             info.show();
 
-            info.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    disableSelectionMode();
-                }
-            });
+            info.setOnClickListener(v -> disableSelectionMode());
             add.setImageDrawable(getDrawable(R.drawable.baseline_content_copy_24));
             add.show();
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                        collect();
-                        Intent intent = new Intent( getApplicationContext(),Sessions.class);
-                        intent.putParcelableArrayListExtra("data",throwdata);
-                        startActivity(intent);
-                }
+            add.setOnClickListener(v -> {
+                    collect();
+                    Intent intent = new Intent( getApplicationContext(),Sessions.class);
+                    intent.putParcelableArrayListExtra("data",throwdata);
+                    startActivity(intent);
             });
             session.hide();
             closed=true;
@@ -196,31 +179,28 @@ public class MainActivity extends AppCompatActivity {
                 Button b= row.findViewById(R.id.button2);
                 b.setBackgroundColor(Color.TRANSPARENT);
                 b.setVisibility(View.VISIBLE);
-                b.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int k=(int)row.getTag();
-                        Vie Q= new Vie(row,k);
-                        if(b.getText().equals(""))
-                        {
-                            b.setBackgroundColor(color);
-                            b.setTextColor(Color.WHITE);
-                            b.setText("✓");
-                            vies.add(Q);
-                        }
-                        else
-                        {
-                            b.setBackgroundColor(Color.TRANSPARENT);
-                            b.setText("");
-                            for (Iterator<Vie> l = vies.iterator(); l.hasNext();) {
-                                Vie b = l.next();
-                                if ((k==b.getPlace())&& row.equals(b.getVi()))
+                b.setOnClickListener(v -> {
+                    int k=(int)row.getTag();
+                    Vie Q= new Vie(row,k);
+                    if(b.getText().equals(""))
+                    {
+                        b.setBackgroundColor(color);
+                        b.setTextColor(Color.WHITE);
+                        b.setText("✓");
+                        vies.add(Q);
+                    }
+                    else
+                    {
+                        b.setBackgroundColor(Color.TRANSPARENT);
+                        b.setText("");
+                        for (Iterator<Vie> l = vies.iterator(); l.hasNext();) {
+                            Vie b1 = l.next();
+                            if ((k== b1.getPlace())&& row.equals(b1.getVi()))
+                            {
+                                l.remove();
+                                if(vies.size()==0)
                                 {
-                                    l.remove();
-                                    if(vies.size()==0)
-                                    {
-                                        disableSelectionMode();
-                                    }
+                                    disableSelectionMode();
                                 }
                             }
                         }
@@ -241,12 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 d.setContentView(R.layout.delete_tutorial);
                 d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 Button b= d.findViewById(R.id.button);
-                b.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        d.dismiss();
-                    }
-                });
+                b.setOnClickListener(v1 -> d.dismiss());
                 d.show();
             });
             add.setOnClickListener(v -> addrow());
@@ -354,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
             v.setTag(lay.getChildCount() - 1);
             LinearLayout rowLayout = v.findViewById(R.id.rowe);
             rowLayout.setOnTouchListener(new View.OnTouchListener() {
-                private GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                private final GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                         if(!isSelectionModeEnabled)
@@ -460,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
             v.setTag(lay.getChildCount() - 1);
             LinearLayout rowLayout = v.findViewById(R.id.rowe);
             rowLayout.setOnTouchListener(new View.OnTouchListener() {
-                private GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                private final GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                         if(!isSelectionModeEnabled)
@@ -561,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grade.getText().toString().equals("")) {
                     sub.grade = -1.0;
                 } else {
-                    sub.grade = Double.valueOf(adapt.getPosition(grade.getText().toString()));
+                    sub.grade = (double) adapt.getPosition(grade.getText().toString());
                 }
                 if (Hours.getText().toString().equals("")) {
                     sub.hours = -1;
@@ -588,7 +563,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grade.getText().toString().equals("")) {
                     sub.grade = -1.0;
                 } else {
-                    sub.grade = Double.valueOf(adapt.getPosition(grade.getText().toString()));
+                    sub.grade = (double) adapt.getPosition(grade.getText().toString());
                 }
                 if (Hours.getText().toString().equals("")) {
                     sub.hours = -1;
@@ -605,6 +580,7 @@ public class MainActivity extends AppCompatActivity {
             DecimalFormat decimalFormat = new DecimalFormat("#0.00", symbols);
             // Convert Arabic number string to a numeric value
             Number number = decimalFormat.parse(numberString);
+            assert number != null;
             return number.doubleValue();
         } catch (Exception e) {
             e.printStackTrace();
@@ -680,13 +656,17 @@ public class MainActivity extends AppCompatActivity {
     private void showUndoOption(@NonNull final View deletedView, final int originalIndex) {
                try{EditText ed= deletedView.findViewById(R.id.editTextText3);
                    String subname= ed.getText().toString();
-                   if(subname.equals("")){Snackbar snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
-                           .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
-                       snackbar.show();
+                   Snackbar snackbar;
+                   if(subname.equals("")){
+                       snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
+                               .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
                    }
-                   else{Snackbar snackbar = Snackbar.make(lay, "you deleted "+subname, Snackbar.LENGTH_LONG)
-                           .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
-                       snackbar.show();}}catch (Exception i){}
+                   else{
+                       snackbar = Snackbar.make(lay, "you deleted " + subname, Snackbar.LENGTH_LONG)
+                               .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
+                   }
+                   snackbar.show();
+               }catch (Exception ignored){}
     }
     private void undoRowDeletion(View deletedView, final int originalIndex) {
         try {
@@ -698,10 +678,6 @@ public class MainActivity extends AppCompatActivity {
                 final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
                 redOverlay2.setVisibility(View.GONE);
                 lay.addView(deletedView, originalIndex);
-                Ho.setText("Total  Hours : " + sum_hours());
-                no.setText("No. Courses : " + lay.getChildCount());
-                CALC();
-                onPause();
             } else {
 
                 sortVieList(vies);
@@ -715,11 +691,11 @@ public class MainActivity extends AppCompatActivity {
                     redOverlay2.setVisibility(View.GONE);
                     lay.addView(de, j);
                 }
-                Ho.setText("Total  Hours : " + sum_hours());
-                no.setText("No. Courses : " + lay.getChildCount());
-                CALC();
-                onPause();
             }
+            Ho.setText("Total  Hours : " + sum_hours());
+            no.setText("No. Courses : " + lay.getChildCount());
+            CALC();
+            onPause();
         }catch(Exception ignored){}
     }
 
@@ -732,15 +708,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static void sortVieList(ArrayList<Vie> vieList) {
-        try{Collections.sort(vieList, new Comparator<Vie>() {
-            @Override
-            public int compare(Vie vie1, Vie vie2) {
-                return Integer.compare(vie1.getPlace(), vie2.getPlace());
-            }
-        });}catch (Exception ignored){}
+        try{Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));}catch (Exception ignored){}
     }
 
-    private double CALC() {
+    private void CALC() {
        try{ data.clear();
            if(lay.getChildCount()!=0)
            {
@@ -771,7 +742,7 @@ public class MainActivity extends AppCompatActivity {
                DecimalFormat dec = new DecimalFormat("#0.00");
                Locale currentLocale = getResources().getConfiguration().locale;
                boolean isArabicLocale = currentLocale.getLanguage().equals("ar");
-               double gpa=0.0;
+               double gpa;
                if (isArabicLocale) {
                    gpa= parseArabicNumber(dec.format(res));
                } else {
@@ -782,11 +753,9 @@ public class MainActivity extends AppCompatActivity {
                    gpa = 0.0;
                }
                G.setText("GPA : "+gpa);
-               return gpa;
            }
            G.setText("GPA : "+0.0);
-           return 0.0;}
+           }
        catch (Exception ignored){}
-        return 0.0;
     }
 }
