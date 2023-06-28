@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#161621"
+    android:background="@drawable/bac"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_30sdp"
+        android:background="#161621"
         android:orientation="horizontal"
         android:paddingTop="@dimen/_1sdp">
 
@@ -25,7 +26,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <Space
             android:layout_width="wrap_content"
@@ -36,10 +37,11 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <Space
@@ -53,7 +55,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <Space
             android:layout_width="wrap_content"

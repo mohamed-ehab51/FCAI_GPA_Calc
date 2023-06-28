@@ -3,29 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/_260sdp"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/_100sdp"
     android:layout_gravity="center"
     android:background="#14141D">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="@dimen/_260sdp"
-            android:layout_height="wrap_content"
-            android:background="#14141D"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="#14141D">
 
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_100sdp"
-                android:layout_marginBottom="1dp"
+                android:layout_height="@dimen/_63sdp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
                 android:gravity="center"
                 android:text="Do you want to take a copy of all subjects to the draft page ?"
                 android:textAlignment="center"
@@ -34,15 +34,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView6"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
                 android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/button3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_20sdp"
-                    android:layout_marginEnd="@dimen/_20sdp"
                     android:backgroundTint="#F64346"
                     android:text="YES"
                     android:textColor="@color/white" />
@@ -55,15 +61,19 @@
                 <Button
                     android:id="@+id/button"
                     android:layout_width="wrap_content"
-                    android:layout_marginStart="@dimen/_20sdp"
-                    android:layout_marginEnd="@dimen/_20sdp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#F64346"
                     android:text="NO"
                     android:textColor="@color/white" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

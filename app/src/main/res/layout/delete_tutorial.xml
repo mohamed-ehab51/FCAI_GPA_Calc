@@ -3,67 +3,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/_260sdp"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/_200sdp"
     android:layout_gravity="center"
     android:background="#14141D">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="@dimen/_260sdp"
-            android:layout_height="wrap_content"
-            android:background="#14141D"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="#14141D">
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/gifImageView"
                 android:layout_width="match_parent"
                 android:layout_height="149dp"
-                android:src="@drawable/del2"
-                app:layout_constraintBottom_toTopOf="@+id/textView6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:src="@drawable/del2" />
 
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginBottom="1dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/button"
+                android:layout_below="@+id/gifImageView"
+                android:gravity="center"
                 android:text="swipe to left/right to delete one subject , or long press and select multiple subjects"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@+id/button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gifImageView" />
+                android:textSize="16sp" />
 
             <Button
                 android:id="@+id/button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="123dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="127dp"
-                android:layout_marginBottom="2dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:backgroundTint="#F64346"
                 android:text="OK"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                android:textColor="@color/white" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
