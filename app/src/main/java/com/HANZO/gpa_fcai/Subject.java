@@ -8,12 +8,6 @@ public class Subject implements Parcelable {
     int hours;
     Double grade;
 
-    public Subject(String name, int hours, Double grade) {
-        this.name = name;
-        this.hours = hours;
-        this.grade = grade;
-    }
-
     protected Subject(Parcel in) {
         name = in.readString();
         hours = in.readInt();
@@ -56,24 +50,12 @@ public class Subject implements Parcelable {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
-    public int getHours() {
-        return hours;
-    }
-
     public void setHours(int hours) {
         this.hours = hours;
-    }
-
-    public Double getGrade() {
-        return grade;
     }
 
     public void setGrade(Double grade) {

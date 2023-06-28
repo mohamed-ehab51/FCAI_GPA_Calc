@@ -15,15 +15,8 @@ public class Vie {
         return vi;
     }
 
-    public void setVi(View vi) {
-        this.vi = vi;
-    }
-
     public int getPlace() {
         return place;
     }
 
-    public void setPlace(int place) {
-        this.place = place;
-    }
 }
