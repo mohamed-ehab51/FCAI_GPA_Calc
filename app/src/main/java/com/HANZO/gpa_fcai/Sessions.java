@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.View;
@@ -28,7 +29,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -139,20 +139,30 @@ public class Sessions extends AppCompatActivity {
         Vie a= new Vie(m,f);
         vies.add(a);
         more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            more.setTooltipText("Delete");
+        }
         add.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            add.setTooltipText("exit multiple selection mode");
+        }
         add.show();
         add.setOnClickListener(v -> disableSelectionMode());
         info.hide();
         closed=true;
         more.setOnClickListener(v -> {
-                delvies.clear();
-                delvies.addAll(vies);
-                vies.clear();
-
-                for(int i=0;i<delvies.size();i++)
-                {
-                    removeRowWithAnimation(delvies.get(i).vi,false);
-                }
+            delvies.clear();
+            delvies.addAll(vies);
+            vies.clear();
+            int i=0;
+            for(;i<delvies.size();i++)
+            {
+                removeRowWithAnimation(delvies.get(i).vi,false);
+            }
+            if(delvies.size()>1)
+            {
+                showUndoOption(delvies.get(i-1).vi, (Integer) delvies.get(i-1).vi.getTag());
+            }
         });
         for (int i = 0; i < lay.getChildCount(); i++) {
             View row = lay.getChildAt(i);
@@ -190,15 +200,24 @@ public class Sessions extends AppCompatActivity {
         z.setBackgroundColor(color);
     }catch (Exception ignored){}}
 
-    private void disableSelectionMode() {try {
+    private void disableSelectionMode() {
+        try {
         isSelectionModeEnabled = false;
+            vies.clear();
+            delvies.clear();
         more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                more.setTooltipText("Show options");
+            }
         add.setOnClickListener(v -> addrow());
         add.hide();
         more.setOnClickListener(v -> {
             if (closed)
             {
                 add.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    add.setTooltipText("Add a new subject");
+                }
                 add.show();
                 info.show();
                 closed=false;
@@ -428,11 +447,18 @@ public class Sessions extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                // Animation end
-                view.setBackgroundColor(defaultBackgroundColor);
                 lay.removeView(view);
+                for(int i=0;i<lay.getChildCount();i++)
+                {
+                    lay.getChildAt(i).setTag(i);
+                }
+                view.setBackgroundColor(defaultBackgroundColor);
+                if(!isSelectionModeEnabled||(isSelectionModeEnabled&&delvies.size()==1))
+                {
+                    showUndoOption(view,originalIndex);
+                }
                 Ho.setText("Total  Hours : "+sum_hours());
-                no.setText("  No. Courses : "+lay.getChildCount());
+                no.setText("No. Courses : "+lay.getChildCount());
                 CALC();
                 if(isSelectionModeEnabled)
                 {
@@ -463,49 +489,150 @@ public class Sessions extends AppCompatActivity {
             return 0.0;
         }
     }
-    private void CALC() {try{
-        data.clear();
-        if(lay.getChildCount()!=0)
-        {
-            for (int i=0;i<lay.getChildCount();i++)
-            {
-                Subject sub=new Subject();
-                View v=lay.getChildAt(i);
-                EditText name=v.findViewById(R.id.editTextText3);
-                AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
-                AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-                if(!(grade.getText().toString().equals("")) && !(Hours.getText().toString().equals("")))
-                {
-                    if(name.getText().toString().equals("")){sub.setName("no name provided");}
-                    else {sub.setName(name.getText().toString());}
-                    sub.setHours(Integer.parseInt(Hours.getText().toString()));
-                    sub.setGrade(dict.get(grade.getText().toString()));
-                    data.add(sub);
+    private void showUndoOption(@NonNull final View deletedView, final int originalIndex) {
+        try{
+            if(delvies.size()>1){
+                Snackbar snackbar = Snackbar.make(lay, "you deleted multiple subjects", Snackbar.LENGTH_SHORT)
+                        .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
+                snackbar.show();
+            }
+            else{
+                EditText ed= deletedView.findViewById(R.id.editTextText3);
+                String subname= ed.getText().toString();
+                if(subname.equals("")){Snackbar snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_SHORT)
+                        .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
+                    snackbar.show();
                 }
+                else{Snackbar snackbar = Snackbar.make(lay, "you deleted "+subname, Snackbar.LENGTH_SHORT)
+                        .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
+                    snackbar.show();}
             }
-            double points =0.0;
-            int hou=0;
-            for(int i=0;i<data.size();i++)
-            {
-                points+=data.get(i).hours*data.get(i).grade;
-                hou+=data.get(i).hours;
-            }
-            double res=points/hou;
-            DecimalFormat dec = new DecimalFormat("#0.00");
-            Locale currentLocale = getResources().getConfiguration().locale;
-            boolean isArabicLocale = currentLocale.getLanguage().equals("ar");
-            double gpa;
-            if (isArabicLocale) {
-                gpa= parseArabicNumber(dec.format(res));
+        }catch (Exception ignored){}
+    }
+    private void undoRowDeletion(View deletedView, final int originalIndex) {
+        try {
+            if ((!isSelectionModeEnabled&&delvies.size()==0)||(isSelectionModeEnabled&&delvies.size()==1)) {
+                final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
+                redOverlay.setVisibility(View.GONE);
+                final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
+                redOverlay2.setVisibility(View.GONE);
+                for(int i=originalIndex;i< lay.getChildCount();i++)
+                {
+                    lay.getChildAt(i).setTag(i+1);
+                }
+                lay.addView(deletedView, originalIndex);
+                if((isSelectionModeEnabled&&delvies.size()<=1))
+                {
+                    vies.add(new Vie(deletedView,originalIndex));
+                }
+                Ho.setText("Total  Hours : " + sum_hours());
+                no.setText("No. Courses : " + lay.getChildCount());
+                CALC();
             } else {
-                gpa= Double.parseDouble(dec.format(res));
+
+                sortVieList(delvies);
+                for (int i = 0; i < delvies.size(); i++) {
+                    int j = delvies.get(i).place;
+                    View de = delvies.get(i).vi;
+                    lay.removeView(de);
+                    final ImageView redOverlay = de.findViewById(R.id.imageView);
+                    redOverlay.setVisibility(View.GONE);
+                    final ImageView redOverlay2 = de.findViewById(R.id.sora);
+                    redOverlay2.setVisibility(View.GONE);
+                    lay.addView(de, j);
+                    vies.add(new Vie(de,j));
+                    for(int k=0;k<lay.getChildCount();k++)
+                    {
+                        lay.getChildAt(k).setTag(k);
+                    }
+                }
+                Ho.setText("Total  Hours : " + sum_hours());
+                no.setText("No. Courses : " + lay.getChildCount());
+                if(!isSelectionModeEnabled) {
+                    try {
+                        isSelectionModeEnabled = true;
+                        more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            more.setTooltipText("Delete");
+                        }
+                        add.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            add.setTooltipText("exit multiple selection mode");
+                        }
+                        add.show();
+                        add.setOnClickListener(v -> disableSelectionMode());
+                        closed=true;
+                        more.setOnClickListener(v -> {
+                            delvies.clear();
+                            delvies.addAll(vies);
+                            vies.clear();
+                            int i=0;
+                            for(;i<delvies.size();i++)
+                            {
+                                removeRowWithAnimation(delvies.get(i).vi,false);
+                            }
+                            if(delvies.size()>1)
+                            {
+                                showUndoOption(delvies.get(i-1).vi, (Integer) delvies.get(i-1).vi.getTag());
+                            }
+                        });
+                    }catch (Exception ignored){}
+                }
+                CALC();
             }
-            if (Double.isNaN(gpa)) {
-                gpa = 0.0;
+        }catch(Exception ignored){}
+    }
+    public static void sortVieList(ArrayList<Vie> vieList) {
+        try{
+            Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));}catch (Exception ignored){}
+    }
+    private double CALC() {
+        try{ data.clear();
+            if(lay.getChildCount()!=0)
+            {
+                for (int i=0;i<lay.getChildCount();i++)
+                {
+                    Subject sub=new Subject();
+                    View v=lay.getChildAt(i);
+                    EditText name=v.findViewById(R.id.editTextText3);
+                    AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
+                    AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
+                    if(!(grade.getText().toString().equals("")) && !(Hours.getText().toString().equals("")))
+                    {
+                        if(name.getText().toString().equals("")){sub.setName("no name provided");}
+                        else {sub.setName(name.getText().toString());}
+                        sub.setHours(Integer.parseInt(Hours.getText().toString()));
+                        sub.setGrade(dict.get(grade.getText().toString()));
+                        data.add(sub);
+                    }
+                }
+                double points =0.0;
+                int hou=0;
+                for(int i=0;i<data.size();i++)
+                {
+                    points+=data.get(i).hours*data.get(i).grade;
+                    hou+=data.get(i).hours;
+                }
+                double res=points/hou;
+                DecimalFormat dec = new DecimalFormat("#0.00");
+                Locale currentLocale = getResources().getConfiguration().locale;
+                boolean isArabicLocale = currentLocale.getLanguage().equals("ar");
+                double gpa=0.0;
+                if (isArabicLocale) {
+                    gpa= parseArabicNumber(dec.format(res));
+                } else {
+                    gpa= Double.parseDouble(dec.format(res));
+                }
+
+                if (Double.isNaN(gpa)) {
+                    gpa = 0.0;
+                }
+                G.setText("GPA : "+gpa);
+                return gpa;
             }
-            G.setText("GPA : "+gpa);
-        }
-        G.setText("GPA : "+0.0);
-    }catch (Exception ignored){}
+            G.setText("GPA : "+0.0);
+            return 0.0;
+        } catch (Exception ignored){}
+        return 0.0;
     }
 }
