@@ -1,5 +1,7 @@
 package com.HANZO.gpa_fcai;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,10 +11,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -23,23 +23,21 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
+import android.view.MotionEvent;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
+import android.view.Window;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Subject> data=new ArrayList<>();
     ArrayList<Subject> throwdata=new ArrayList<>();
     private boolean isSelectionModeEnabled;
-    private final ArrayList<Vie> vies=new ArrayList<>();
+    private ArrayList<Vie> vies=new ArrayList<>();
+    private ArrayList<Vie> delvies=new ArrayList<>();
 
     TextView G ;
     Dialog d;
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     boolean closed = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
+//        try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
             Window window = this.getWindow();
@@ -113,14 +112,14 @@ public class MainActivity extends AppCompatActivity {
                 d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 Button yes= d.findViewById(R.id.button3);
                 Button no= d.findViewById(R.id.button);
-                yes.setOnClickListener(v13 -> {
+                yes.setOnClickListener(v12 -> {
                     collectall();
                     d.dismiss();
                     Intent intent = new Intent( getApplicationContext(),Sessions.class);
                     intent.putParcelableArrayListExtra("data",throwdata);
                     startActivity(intent);
                 });
-                no.setOnClickListener(v12 -> {
+                no.setOnClickListener(v13 -> {
                     d.dismiss();
                     Intent intent = new Intent( getApplicationContext(),Sessions.class);
                     startActivity(intent);
@@ -139,10 +138,10 @@ public class MainActivity extends AppCompatActivity {
             dict.put("F", 0.0);
             Ho.setText("Total  Hours : "+sum_hours());
             G.setText("GPA : "+0.0);
-        }catch (Exception ignored){}
+        //}catch (Exception ignored){}
     }
     private void enableSelectionMode(View m) {
-        try {
+        //try {
             isSelectionModeEnabled = true;
             int alpha = 50;
             int color = Color.argb(alpha, 255, 255, 255);
@@ -169,9 +168,21 @@ public class MainActivity extends AppCompatActivity {
             session.hide();
             closed=true;
             more.setOnClickListener(v -> {
-                for(int i=0;i<vies.size();i++)
+                delvies.clear();
+                delvies.addAll(vies);
+                vies.clear();
+                int i=0;
+                for(;i<delvies.size();i++)
                 {
-                    removeRowWithAnimation(vies.get(i).vi,false);
+                    removeRowWithAnimation(delvies.get(i).vi,false);
+                }
+                for(int k=0;k<lay.getChildCount();k++)
+                {
+                    lay.getChildAt(k).setTag(k);
+                }
+                if(delvies.size()>1)
+                {
+                    showUndoOption(delvies.get(i-1).vi, (Integer) delvies.get(i-1).vi.getTag());
                 }
             });
             for (int i = 0; i < lay.getChildCount(); i++) {
@@ -206,13 +217,14 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
             }
             z.setBackgroundColor(color);
-        }catch (Exception ignored){}
+        //}catch (Exception ignored){}
     }
 
     private void disableSelectionMode() {
-        try {
+        //try {
             isSelectionModeEnabled = false;
             more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
             add.hide();
@@ -256,11 +268,11 @@ public class MainActivity extends AppCompatActivity {
                 t1.setEnabled(true);
             }
             vies.clear();
-        }catch (Exception ignored){}
+        //}catch (Exception ignored){}
     }
 
     private void addrow() {
-        try {
+        //try {
             View v=getLayoutInflater().inflate(R.layout.row,null,false);
             aut = v.findViewById(R.id.autoCompleteTextView2);
             na=v.findViewById(R.id.editTextText3);
@@ -329,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
             v.setTag(lay.getChildCount() - 1);
             LinearLayout rowLayout = v.findViewById(R.id.rowe);
             rowLayout.setOnTouchListener(new View.OnTouchListener() {
-                private final GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                private GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                         if(!isSelectionModeEnabled)
@@ -359,10 +371,10 @@ public class MainActivity extends AppCompatActivity {
             });
             no.setText("No. Courses : "+lay.getChildCount());
             onPause();
-        }catch (Exception ignored){}
+        //}catch (Exception ignored){}
     }
     private void retrieve_row(String n,int h,int g) {
-        try {
+        //try {
             View v=getLayoutInflater().inflate(R.layout.row,null,false);
             na=v.findViewById(R.id.editTextText3);
             aut = v.findViewById(R.id.autoCompleteTextView2);
@@ -435,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
             v.setTag(lay.getChildCount() - 1);
             LinearLayout rowLayout = v.findViewById(R.id.rowe);
             rowLayout.setOnTouchListener(new View.OnTouchListener() {
-                private final GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                private GestureDetector gestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                         if(!isSelectionModeEnabled)
@@ -462,14 +474,13 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             });
-        }catch (Exception ignored ){}
+        //}catch (Exception ignored ){}
     }
 
     @Override
     protected void onResume() {
-        try {
+        //try {
             super.onResume();
-            // Fetching the stored data from the SharedPreference
             SharedPreferences sh = getSharedPreferences("GG", MODE_PRIVATE);
             int Count=sh.getInt("Count",0);
             String def=sh.getString("GPA","");
@@ -494,13 +505,12 @@ public class MainActivity extends AppCompatActivity {
                 no.setText("No. Courses : "+lay.getChildCount());
                 Ho.setText("Total  Hours : "+sum_hours());
             }
-        }catch (Exception ignored){}
+        //}catch (Exception ignored){}
     }
     @Override
     protected void onPause() {
-        try {
+        //try {
             super.onPause();
-            // Creating a shared pref object with a file name "MySharedPref" in private mode
             SharedPreferences sharedPreferences = getSharedPreferences("GG", MODE_PRIVATE);
             SharedPreferences.Editor myEdit = sharedPreferences.edit();
             myEdit.putInt("Count", lay.getChildCount());
@@ -515,13 +525,13 @@ public class MainActivity extends AppCompatActivity {
                 if(name.getText().toString().equals("")){myEdit.putString("Name"+i, "no name provided");}else{myEdit.putString("Name"+i, name.getText().toString());}
                 if(Hours.getText().toString().equals("")){myEdit.putInt("Hours"+i,-1);}else{myEdit.putInt("Hours"+i,adapter.getPosition(Hours.getText().toString()));}
                 if(grade.getText().toString().equals("")){myEdit.putInt("Grade"+i, -1);}else{myEdit.putInt("Grade"+i,adapt.getPosition(grade.getText().toString()));}
-                myEdit.apply();
             }
-        }catch (Exception ignored){}
+                myEdit.apply();
+        //}catch (Exception ignored){}
     }
 
     void collect(){
-        try {
+        //try {
             for (int i = 0; i < vies.size(); i++) {
                 View v = vies.get(i).vi;
                 Subject sub = new Subject();
@@ -536,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grade.getText().toString().equals("")) {
                     sub.grade = -1.0;
                 } else {
-                    sub.grade = (double) adapt.getPosition(grade.getText().toString());
+                    sub.grade = Double.valueOf(adapt.getPosition(grade.getText().toString()));
                 }
                 if (Hours.getText().toString().equals("")) {
                     sub.hours = -1;
@@ -545,10 +555,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 throwdata.add(sub);
             }
-        }catch (Exception ignored){}
+        //}catch (Exception ignored){}
     }
     void collectall(){
-        try {
+        //try {
             for (int i = 0; i < lay.getChildCount(); i++) {
                 View v = lay.getChildAt(i);
                 Subject sub = new Subject();
@@ -563,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grade.getText().toString().equals("")) {
                     sub.grade = -1.0;
                 } else {
-                    sub.grade = (double) adapt.getPosition(grade.getText().toString());
+                    sub.grade = Double.valueOf(adapt.getPosition(grade.getText().toString()));
                 }
                 if (Hours.getText().toString().equals("")) {
                     sub.hours = -1;
@@ -572,15 +582,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 throwdata.add(sub);
             }
-        }catch (Exception ignored){}
+        //}catch (Exception ignored){}
     }
     private double parseArabicNumber(String numberString) {
         try {
             DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("ar"));
             DecimalFormat decimalFormat = new DecimalFormat("#0.00", symbols);
-            // Convert Arabic number string to a numeric value
             Number number = decimalFormat.parse(numberString);
-            assert number != null;
             return number.doubleValue();
         } catch (Exception e) {
             e.printStackTrace();
@@ -589,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int sum_hours() {
-        try {
+        //try {
             int sum = 0;
             for (int i=0;i<lay.getChildCount();i++)
             {
@@ -601,16 +609,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return sum;
-        }catch (Exception ignored){}
-        return 0;
+        //}catch (Exception ignored){}
+        //return 0;
     }
 
     private void removeRowWithAnimation(@NonNull final View view, final boolean swipeRight) {
-       try {
+       //try {
+
            final int defaultBackgroundColor = view.getSolidColor();
            ImageView redOverlay = view.findViewById(R.id.imageView);
            ImageView redOverlay2 = view.findViewById(R.id.sora);
-           final int swipeBackgroundColor = getResources().getColor(R.color.REDD); // Change color as needed
+           final int swipeBackgroundColor = getResources().getColor(R.color.REDD);
            final int originalIndex = (int) view.getTag();
            Animation animation = new TranslateAnimation(0, swipeRight ? view.getWidth() : -view.getWidth(), 0, 0);
            animation.setDuration(300);
@@ -625,18 +634,32 @@ public class MainActivity extends AppCompatActivity {
                        redOverlay.setVisibility(View.VISIBLE);
 
                    }
-                   // Animation start
                }
 
                @Override
                public void onAnimationEnd(Animation animation) {
-                   // Animation end
                    lay.removeView(view);
+                  if(delvies.size()<=1){
+                      for(int i=0;i<lay.getChildCount();i++)
+                      {
+                          lay.getChildAt(i).setTag(i);
+                      }
+                  }
                    view.setBackgroundColor(defaultBackgroundColor);
-                   showUndoOption(view,originalIndex);
+                   if(!isSelectionModeEnabled||(isSelectionModeEnabled&&delvies.size()==1))
+                   {
+                        showUndoOption(view,originalIndex);
+                   }
                    Ho.setText("Total  Hours : "+sum_hours());
                    no.setText("No. Courses : "+lay.getChildCount());
                    CALC();
+                   if(isSelectionModeEnabled)
+                   {
+                       if(lay.getChildCount()==0)
+                       {
+                           disableSelectionMode();
+                       }
+                   }
                    onPause();
                }
 
@@ -651,52 +674,64 @@ public class MainActivity extends AppCompatActivity {
            view.startAnimation(animation);
 
 
-       }catch (Exception ignored){}
+       //}catch (Exception ignored){}
     }
     private void showUndoOption(@NonNull final View deletedView, final int originalIndex) {
-               try{EditText ed= deletedView.findViewById(R.id.editTextText3);
-                   String subname= ed.getText().toString();
-                   Snackbar snackbar;
-                   if(subname.equals("")){
-                       snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
-                               .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
+               //try{
+                   if(delvies.size()>1){
+                       Snackbar snackbar = Snackbar.make(lay, "you deleted multiple subjects", Snackbar.LENGTH_LONG)
+                               .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
+                       snackbar.show();
                    }
                    else{
-                       snackbar = Snackbar.make(lay, "you deleted " + subname, Snackbar.LENGTH_LONG)
-                               .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
+                   EditText ed= deletedView.findViewById(R.id.editTextText3);
+                   String subname= ed.getText().toString();
+                   if(subname.equals("")){Snackbar snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
+                           .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
+                       snackbar.show();
                    }
-                   snackbar.show();
-               }catch (Exception ignored){}
+                   else{Snackbar snackbar = Snackbar.make(lay, "you deleted "+subname, Snackbar.LENGTH_LONG)
+                           .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
+                       snackbar.show();}
+                        }
+               //}catch (Exception i){}
     }
     private void undoRowDeletion(View deletedView, final int originalIndex) {
-        try {
+        //try {
             if (!isSelectionModeEnabled) {
-                lay.removeView(deletedView);
-                // Add the undeleted view back to its original position
                 final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
                 redOverlay.setVisibility(View.GONE);
                 final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
                 redOverlay2.setVisibility(View.GONE);
+                for(int i=originalIndex;i< lay.getChildCount();i++)
+                {
+                    lay.getChildAt(i).setTag(i+1);
+                }
                 lay.addView(deletedView, originalIndex);
+                Ho.setText("Total  Hours : " + sum_hours());
+                no.setText("No. Courses : " + lay.getChildCount());
+                CALC();
+                onPause();
             } else {
 
-                sortVieList(vies);
-                for (int i = 0; i < vies.size(); i++) {
-                    int j = vies.get(i).place;
-                    View de = vies.get(i).vi;
+                sortVieList(delvies);
+                for (int i = 0; i < delvies.size(); i++) {
+                    int j = delvies.get(i).place;
+                    View de = delvies.get(i).vi;
                     lay.removeView(de);
                     final ImageView redOverlay = de.findViewById(R.id.imageView);
                     redOverlay.setVisibility(View.GONE);
                     final ImageView redOverlay2 = de.findViewById(R.id.sora);
                     redOverlay2.setVisibility(View.GONE);
                     lay.addView(de, j);
+                    vies.add(new Vie(de,j));
                 }
+                Ho.setText("Total  Hours : " + sum_hours());
+                no.setText("No. Courses : " + lay.getChildCount());
+                CALC();
+                onPause();
             }
-            Ho.setText("Total  Hours : " + sum_hours());
-            no.setText("No. Courses : " + lay.getChildCount());
-            CALC();
-            onPause();
-        }catch(Exception ignored){}
+        //}catch(Exception ignored){}
     }
 
 
@@ -708,11 +743,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static void sortVieList(ArrayList<Vie> vieList) {
-        try{Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));}catch (Exception ignored){}
+        //try{
+            Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));//}catch (Exception ignored){}
     }
 
-    private void CALC() {
-       try{ data.clear();
+    private double CALC() {
+       //try{ data.clear();
            if(lay.getChildCount()!=0)
            {
                for (int i=0;i<lay.getChildCount();i++)
@@ -742,7 +778,7 @@ public class MainActivity extends AppCompatActivity {
                DecimalFormat dec = new DecimalFormat("#0.00");
                Locale currentLocale = getResources().getConfiguration().locale;
                boolean isArabicLocale = currentLocale.getLanguage().equals("ar");
-               double gpa;
+               double gpa=0.0;
                if (isArabicLocale) {
                    gpa= parseArabicNumber(dec.format(res));
                } else {
@@ -753,9 +789,11 @@ public class MainActivity extends AppCompatActivity {
                    gpa = 0.0;
                }
                G.setText("GPA : "+gpa);
+               return gpa;
            }
            G.setText("GPA : "+0.0);
-           }
-       catch (Exception ignored){}
+           return 0.0;
+//} catch (Exception ignored){}
+//        return 0.0;
     }
 }

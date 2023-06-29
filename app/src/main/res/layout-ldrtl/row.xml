@@ -26,6 +26,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
+        <ImageView
+            android:id="@+id/sora"
+            android:layout_width="@dimen/_69sdp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/baseline_delete_sweep_24r" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/editTextText"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -42,14 +50,6 @@
                 android:backgroundTintMode="add"                android:layout_height="wrap_content"
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <ImageView
-            android:id="@+id/sora"
-            android:layout_width="@dimen/_69sdp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"
-            app:srcCompat="@drawable/baseline_delete_sweep_24r" />
 
         <Space
             android:layout_width="wrap_content"
@@ -92,11 +92,6 @@
             android:textColorHint="#B3B3B3" />
 
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="@dimen/_69sdp"
@@ -104,6 +99,11 @@
             android:layout_weight="0"
             android:visibility="gone"
             app:srcCompat="@drawable/baseline_delete_sweep_24" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

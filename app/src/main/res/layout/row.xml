@@ -26,6 +26,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
+        <ImageView
+            android:id="@+id/sora"
+            android:layout_width="@dimen/_69sdp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/baseline_delete_sweep_24r" />
+
         <EditText
             android:id="@+id/editTextText3"
             android:layout_width="@dimen/_96sdp"
@@ -36,14 +44,6 @@
             android:textAlignment="textStart"
             android:textColor="@color/white"
             android:textColorHint="#B3B3B3" />
-
-        <ImageView
-            android:id="@+id/sora"
-            android:layout_width="@dimen/_69sdp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"
-            app:srcCompat="@drawable/baseline_delete_sweep_24r" />
 
         <Space
             android:layout_width="wrap_content"
@@ -93,11 +93,6 @@
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="@dimen/_69sdp"
@@ -105,6 +100,11 @@
             android:layout_weight="0"
             android:visibility="gone"
             app:srcCompat="@drawable/baseline_delete_sweep_24" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

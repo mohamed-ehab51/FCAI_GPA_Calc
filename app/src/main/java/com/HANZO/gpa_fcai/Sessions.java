@@ -424,12 +424,19 @@ public class Sessions extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 // Animation end
-                lay.removeView(view);
                 view.setBackgroundColor(defaultBackgroundColor);
+                lay.removeView(view);
                 showUndoOption(view,originalIndex);
                 Ho.setText("Total  Hours : "+sum_hours());
                 no.setText("  No. Courses : "+lay.getChildCount());
                 CALC();
+                if(isSelectionModeEnabled)
+                {
+                    if(lay.getChildCount()==0)
+                    {
+                        disableSelectionMode();
+                    }
+                }
             }
 
             @Override
