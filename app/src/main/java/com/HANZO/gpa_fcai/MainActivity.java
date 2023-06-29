@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     boolean closed = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        try {
+        try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
             Window window = this.getWindow();
@@ -138,10 +138,10 @@ public class MainActivity extends AppCompatActivity {
             dict.put("F", 0.0);
             Ho.setText("Total  Hours : "+sum_hours());
             G.setText("GPA : "+0.0);
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
     private void enableSelectionMode(View m) {
-        //try {
+        try {
             isSelectionModeEnabled = true;
             int alpha = 50;
             int color = Color.argb(alpha, 255, 255, 255);
@@ -168,22 +168,14 @@ public class MainActivity extends AppCompatActivity {
             session.hide();
             closed=true;
             more.setOnClickListener(v -> {
-                delvies.clear();
-                delvies.addAll(vies);
-                vies.clear();
-                int i=0;
-                for(;i<delvies.size();i++)
-                {
-                    removeRowWithAnimation(delvies.get(i).vi,false);
-                }
-                for(int k=0;k<lay.getChildCount();k++)
-                {
-                    lay.getChildAt(k).setTag(k);
-                }
-                if(delvies.size()>1)
-                {
-                    showUndoOption(delvies.get(i-1).vi, (Integer) delvies.get(i-1).vi.getTag());
-                }
+
+                    delvies.clear();
+                    delvies.addAll(vies);
+                    vies.clear();
+                    for(int i=0;i<delvies.size();i++)
+                    {
+                        removeRowWithAnimation(delvies.get(i).vi,false);
+                    }
             });
             for (int i = 0; i < lay.getChildCount(); i++) {
                 View row = lay.getChildAt(i);
@@ -220,11 +212,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
             z.setBackgroundColor(color);
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
-
     private void disableSelectionMode() {
-        //try {
+        try {
             isSelectionModeEnabled = false;
             more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
             add.hide();
@@ -268,11 +259,10 @@ public class MainActivity extends AppCompatActivity {
                 t1.setEnabled(true);
             }
             vies.clear();
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
-
     private void addrow() {
-        //try {
+        try {
             View v=getLayoutInflater().inflate(R.layout.row,null,false);
             aut = v.findViewById(R.id.autoCompleteTextView2);
             na=v.findViewById(R.id.editTextText3);
@@ -371,10 +361,10 @@ public class MainActivity extends AppCompatActivity {
             });
             no.setText("No. Courses : "+lay.getChildCount());
             onPause();
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
     private void retrieve_row(String n,int h,int g) {
-        //try {
+        try {
             View v=getLayoutInflater().inflate(R.layout.row,null,false);
             na=v.findViewById(R.id.editTextText3);
             aut = v.findViewById(R.id.autoCompleteTextView2);
@@ -474,12 +464,11 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             });
-        //}catch (Exception ignored ){}
+        }catch (Exception ignored ){}
     }
-
     @Override
     protected void onResume() {
-        //try {
+        try {
             super.onResume();
             SharedPreferences sh = getSharedPreferences("GG", MODE_PRIVATE);
             int Count=sh.getInt("Count",0);
@@ -505,11 +494,11 @@ public class MainActivity extends AppCompatActivity {
                 no.setText("No. Courses : "+lay.getChildCount());
                 Ho.setText("Total  Hours : "+sum_hours());
             }
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
     @Override
     protected void onPause() {
-        //try {
+        try {
             super.onPause();
             SharedPreferences sharedPreferences = getSharedPreferences("GG", MODE_PRIVATE);
             SharedPreferences.Editor myEdit = sharedPreferences.edit();
@@ -527,11 +516,10 @@ public class MainActivity extends AppCompatActivity {
                 if(grade.getText().toString().equals("")){myEdit.putInt("Grade"+i, -1);}else{myEdit.putInt("Grade"+i,adapt.getPosition(grade.getText().toString()));}
             }
                 myEdit.apply();
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
-
     void collect(){
-        //try {
+        try {
             for (int i = 0; i < vies.size(); i++) {
                 View v = vies.get(i).vi;
                 Subject sub = new Subject();
@@ -555,10 +543,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 throwdata.add(sub);
             }
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
     void collectall(){
-        //try {
+        try {
             for (int i = 0; i < lay.getChildCount(); i++) {
                 View v = lay.getChildAt(i);
                 Subject sub = new Subject();
@@ -582,22 +570,22 @@ public class MainActivity extends AppCompatActivity {
                 }
                 throwdata.add(sub);
             }
-        //}catch (Exception ignored){}
+        }catch (Exception ignored){}
     }
     private double parseArabicNumber(String numberString) {
         try {
             DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("ar"));
             DecimalFormat decimalFormat = new DecimalFormat("#0.00", symbols);
             Number number = decimalFormat.parse(numberString);
+            assert number != null;
             return number.doubleValue();
         } catch (Exception e) {
             e.printStackTrace();
             return 0.0;
         }
     }
-
     private int sum_hours() {
-        //try {
+        try {
             int sum = 0;
             for (int i=0;i<lay.getChildCount();i++)
             {
@@ -609,12 +597,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return sum;
-        //}catch (Exception ignored){}
-        //return 0;
+        }catch (Exception ignored){}
+        return 0;
     }
-
     private void removeRowWithAnimation(@NonNull final View view, final boolean swipeRight) {
-       //try {
+       try {
 
            final int defaultBackgroundColor = view.getSolidColor();
            ImageView redOverlay = view.findViewById(R.id.imageView);
@@ -646,10 +633,6 @@ public class MainActivity extends AppCompatActivity {
                       }
                   }
                    view.setBackgroundColor(defaultBackgroundColor);
-                   if(!isSelectionModeEnabled||(isSelectionModeEnabled&&delvies.size()==1))
-                   {
-                        showUndoOption(view,originalIndex);
-                   }
                    Ho.setText("Total  Hours : "+sum_hours());
                    no.setText("No. Courses : "+lay.getChildCount());
                    CALC();
@@ -674,81 +657,10 @@ public class MainActivity extends AppCompatActivity {
            view.startAnimation(animation);
 
 
-       //}catch (Exception ignored){}
+       }catch (Exception ignored){}
     }
-    private void showUndoOption(@NonNull final View deletedView, final int originalIndex) {
-               //try{
-                   if(delvies.size()>1){
-                       Snackbar snackbar = Snackbar.make(lay, "you deleted multiple subjects", Snackbar.LENGTH_LONG)
-                               .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
-                       snackbar.show();
-                   }
-                   else{
-                   EditText ed= deletedView.findViewById(R.id.editTextText3);
-                   String subname= ed.getText().toString();
-                   if(subname.equals("")){Snackbar snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
-                           .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
-                       snackbar.show();
-                   }
-                   else{Snackbar snackbar = Snackbar.make(lay, "you deleted "+subname, Snackbar.LENGTH_LONG)
-                           .setAction("Undo", v -> undoRowDeletion(deletedView,originalIndex));
-                       snackbar.show();}
-                        }
-               //}catch (Exception i){}
-    }
-    private void undoRowDeletion(View deletedView, final int originalIndex) {
-        //try {
-            if (!isSelectionModeEnabled) {
-                final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
-                redOverlay.setVisibility(View.GONE);
-                final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
-                redOverlay2.setVisibility(View.GONE);
-                for(int i=originalIndex;i< lay.getChildCount();i++)
-                {
-                    lay.getChildAt(i).setTag(i+1);
-                }
-                lay.addView(deletedView, originalIndex);
-                Ho.setText("Total  Hours : " + sum_hours());
-                no.setText("No. Courses : " + lay.getChildCount());
-                CALC();
-                onPause();
-            } else {
-
-                sortVieList(delvies);
-                for (int i = 0; i < delvies.size(); i++) {
-                    int j = delvies.get(i).place;
-                    View de = delvies.get(i).vi;
-                    lay.removeView(de);
-                    final ImageView redOverlay = de.findViewById(R.id.imageView);
-                    redOverlay.setVisibility(View.GONE);
-                    final ImageView redOverlay2 = de.findViewById(R.id.sora);
-                    redOverlay2.setVisibility(View.GONE);
-                    lay.addView(de, j);
-                    vies.add(new Vie(de,j));
-                }
-                Ho.setText("Total  Hours : " + sum_hours());
-                no.setText("No. Courses : " + lay.getChildCount());
-                CALC();
-                onPause();
-            }
-        //}catch(Exception ignored){}
-    }
-
-
-
-
-
-
-
-
-
-    public static void sortVieList(ArrayList<Vie> vieList) {
-        //try{
-            Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));//}catch (Exception ignored){}
-    }
-
     private double CALC() {
-       //try{ data.clear();
+       try{ data.clear();
            if(lay.getChildCount()!=0)
            {
                for (int i=0;i<lay.getChildCount();i++)
@@ -792,8 +704,8 @@ public class MainActivity extends AppCompatActivity {
                return gpa;
            }
            G.setText("GPA : "+0.0);
-           return 0.0;
-//} catch (Exception ignored){}
-//        return 0.0;
+           return 0.0;}
+       catch (Exception ignored){}
+        return 0.0;
     }
 }

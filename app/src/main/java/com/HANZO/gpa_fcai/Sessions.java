@@ -41,6 +41,8 @@ public class Sessions extends AppCompatActivity {
     TextView G ;
     TextView Ho ;
     private final ArrayList<Vie> vies=new ArrayList<>();
+    private ArrayList<Vie> delvies=new ArrayList<>();
+
     String[] grades = {"A+", "A", "B+", "B", "C+", "C", "D+", "D", "F"};
     String[] Hours = {"0","2","3","6"};
     AutoCompleteTextView aut;
@@ -143,10 +145,14 @@ public class Sessions extends AppCompatActivity {
         info.hide();
         closed=true;
         more.setOnClickListener(v -> {
-            for(int i=0;i<vies.size();i++)
-            {
-                removeRowWithAnimation(vies.get(i).vi,false);
-            }
+                delvies.clear();
+                delvies.addAll(vies);
+                vies.clear();
+
+                for(int i=0;i<delvies.size();i++)
+                {
+                    removeRowWithAnimation(delvies.get(i).vi,false);
+                }
         });
         for (int i = 0; i < lay.getChildCount(); i++) {
             View row = lay.getChildAt(i);
@@ -187,12 +193,12 @@ public class Sessions extends AppCompatActivity {
     private void disableSelectionMode() {try {
         isSelectionModeEnabled = false;
         more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
-        add.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
         add.setOnClickListener(v -> addrow());
         add.hide();
         more.setOnClickListener(v -> {
             if (closed)
             {
+                add.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
                 add.show();
                 info.show();
                 closed=false;
@@ -216,7 +222,6 @@ public class Sessions extends AppCompatActivity {
             t.setEnabled(true);
             t1.setEnabled(true);
         }
-        // Clear the selected rows list
         vies.clear();
     }catch (Exception ignored){}}
     private void addrow() {try{
@@ -426,7 +431,6 @@ public class Sessions extends AppCompatActivity {
                 // Animation end
                 view.setBackgroundColor(defaultBackgroundColor);
                 lay.removeView(view);
-                showUndoOption(view,originalIndex);
                 Ho.setText("Total  Hours : "+sum_hours());
                 no.setText("  No. Courses : "+lay.getChildCount());
                 CALC();
@@ -438,12 +442,9 @@ public class Sessions extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
-
         });
 
 
@@ -451,27 +452,10 @@ public class Sessions extends AppCompatActivity {
 
 
     }catch (Exception ignored){}}
-    private void showUndoOption(@NonNull final View deletedView, final int originalIndex) {try{
-        EditText ed= deletedView.findViewById(R.id.editTextText3);
-        String subname= ed.getText().toString();
-        Snackbar snackbar;
-        if(subname.equals("")){
-            snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_LONG)
-                    .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
-        }
-        else{
-            snackbar = Snackbar.make(lay, "you deleted " + subname, Snackbar.LENGTH_LONG)
-                    .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
-        }
-        snackbar.show();
-
-
-    }catch (Exception ignored){}}
     private double parseArabicNumber(String numberString) {
         try {
             DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("ar"));
             DecimalFormat decimalFormat = new DecimalFormat("#0.00", symbols);
-            // Convert Arabic number string to a numeric value
             Number number = decimalFormat.parse(numberString);
             assert number != null;
             return number.doubleValue();
@@ -479,41 +463,6 @@ public class Sessions extends AppCompatActivity {
             return 0.0;
         }
     }
-    private void undoRowDeletion(View deletedView, final int originalIndex) {try{
-        if(!isSelectionModeEnabled)
-        {
-            lay.removeView(deletedView);
-            // Add the undeleted view back to its original position
-            final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
-            redOverlay.setVisibility(View.GONE);
-            final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
-            redOverlay2.setVisibility(View.GONE);
-            lay.addView(deletedView, originalIndex);
-        }
-        else{
-
-            sortVieList(vies);
-            for(int i=0;i<vies.size();i++)
-            {
-                int j=vies.get(i).place;
-                View de=vies.get(i).vi;
-                lay.removeView(de);
-                final ImageView redOverlay = de.findViewById(R.id.imageView);
-                redOverlay.setVisibility(View.GONE);
-                final ImageView redOverlay2 = de.findViewById(R.id.sora);
-                redOverlay2.setVisibility(View.GONE);
-                lay.addView(de, j);
-            }
-        }
-        Ho.setText("Total  Hours : "+sum_hours());
-        no.setText("  No. Courses : "+lay.getChildCount());
-        CALC();
-
-    }catch (Exception ignored){}}
-    public static void sortVieList(ArrayList<Vie> vieList) {try{
-        // Use a custom Comparator to compare the 'place' property
-        Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));
-    }catch (Exception ignored){}}
     private void CALC() {try{
         data.clear();
         if(lay.getChildCount()!=0)
