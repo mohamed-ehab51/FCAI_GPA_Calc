@@ -546,7 +546,7 @@ public class Sessions extends AppCompatActivity {
                         lay.getChildAt(k).setTag(k);
                     }
                 }
-
+                delvies.clear();
                 Ho.setText("Total  Hours : " + sum_hours());
                 no.setText("No. Courses : " + lay.getChildCount());
                 CALC();
