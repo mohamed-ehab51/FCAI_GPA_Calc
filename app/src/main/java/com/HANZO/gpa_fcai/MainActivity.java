@@ -233,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
         try {
         isSelectionModeEnabled = false;
         vies.clear();
-        delvies.clear();
         more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 more.setTooltipText("Show options");
@@ -370,12 +369,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onLongPress(MotionEvent e) {
-                    if(!isSelectionModeEnabled){
                         enableSelectionMode(v);
-
-                    }else{
-                        disableSelectionMode();
-                    }
                 }
             });
 
@@ -476,12 +470,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onLongPress(MotionEvent e) {
-                    if(!isSelectionModeEnabled){
                         enableSelectionMode(v);
-
-                    }else{
-                        disableSelectionMode();
-                    }
                 }
             });
 
@@ -661,20 +650,14 @@ public class MainActivity extends AppCompatActivity {
                     lay.getChildAt(i).setTag(i);
                 }
                 view.setBackgroundColor(defaultBackgroundColor);
-                if(!isSelectionModeEnabled||(isSelectionModeEnabled&&delvies.size()==1))
+                if(delvies.size()<=1)
                 {
                     showUndoOption(view,originalIndex);
                 }
                 Ho.setText("Total  Hours : "+sum_hours());
                 no.setText("No. Courses : "+lay.getChildCount());
                 CALC();
-                if(isSelectionModeEnabled)
-                {
-                    if(lay.getChildCount()==0)
-                    {
-                        disableSelectionMode();
-                    }
-                }
+                disableSelectionMode();
                 onPause();
             }
 
@@ -713,7 +696,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void undoRowDeletion(View deletedView, final int originalIndex) {
         try {
-        if ((!isSelectionModeEnabled&&delvies.size()==0)||(isSelectionModeEnabled&&delvies.size()==1)) {
+        if (!got_it(new Vie(deletedView,originalIndex))) {
             final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
             redOverlay.setVisibility(View.GONE);
             final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
@@ -732,67 +715,27 @@ public class MainActivity extends AppCompatActivity {
             CALC();
             onPause();
         } else {
-
             sortVieList(delvies);
             for (int i = 0; i < delvies.size(); i++) {
                 int j = delvies.get(i).place;
                 View de = delvies.get(i).vi;
-                lay.removeView(de);
                 final ImageView redOverlay = de.findViewById(R.id.imageView);
+                final Button m = de.findViewById(R.id.button2);
+                m.setVisibility(View.GONE);
+                m.setBackgroundColor(Color.TRANSPARENT);
+                m.setText("");
                 redOverlay.setVisibility(View.GONE);
                 final ImageView redOverlay2 = de.findViewById(R.id.sora);
                 redOverlay2.setVisibility(View.GONE);
                 lay.addView(de, j);
-                vies.add(new Vie(de,j));
                 for(int k=0;k<lay.getChildCount();k++)
                 {
                     lay.getChildAt(k).setTag(k);
                 }
             }
+
             Ho.setText("Total  Hours : " + sum_hours());
             no.setText("No. Courses : " + lay.getChildCount());
-            if(!isSelectionModeEnabled) {
-                try {
-                isSelectionModeEnabled = true;
-                more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        more.setTooltipText("Delete");
-                    }
-                info.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        info.setTooltipText("exit multiple selection mode");
-                    }
-                info.show();
-                info.setOnClickListener(v -> disableSelectionMode());
-                add.setImageDrawable(getDrawable(R.drawable.baseline_content_copy_24));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        add.setTooltipText("copy subjects to one time draft");
-                    }
-                add.show();
-                add.setOnClickListener(v -> {
-                    collect();
-                    Intent intent = new Intent( getApplicationContext(),Sessions.class);
-                    intent.putParcelableArrayListExtra("data",throwdata);
-                    startActivity(intent);
-                });
-                session.hide();
-                closed=true;
-                more.setOnClickListener(v -> {
-                    delvies.clear();
-                    delvies.addAll(vies);
-                    vies.clear();
-                    int i=0;
-                    for(;i<delvies.size();i++)
-                    {
-                        removeRowWithAnimation(delvies.get(i).vi,false);
-                    }
-                    if(delvies.size()>1)
-                    {
-                        showUndoOption(delvies.get(i-1).vi, (Integer) delvies.get(i-1).vi.getTag());
-                    }
-                });
-                }catch (Exception ignored){}
-            }
             CALC();
             onPause();
         }
@@ -810,6 +753,17 @@ public class MainActivity extends AppCompatActivity {
     public static void sortVieList(ArrayList<Vie> vieList) {
         try{
         Collections.sort(vieList, (vie1, vie2) -> Integer.compare(vie1.getPlace(), vie2.getPlace()));}catch (Exception ignored){}
+    }
+    public boolean got_it(Vie obj)
+    {
+        for (int i=0;i<delvies.size();i++)
+        {
+            if((delvies.get(i).getVi()==obj.getVi()&&delvies.get(i).getPlace()==obj.getPlace()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private double CALC() {

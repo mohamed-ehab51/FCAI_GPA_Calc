@@ -204,7 +204,6 @@ public class Sessions extends AppCompatActivity {
         try {
         isSelectionModeEnabled = false;
             vies.clear();
-            delvies.clear();
         more.setImageDrawable(getDrawable(R.drawable.baseline_more_horiz_24));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 more.setTooltipText("Show options");
@@ -307,12 +306,7 @@ public class Sessions extends AppCompatActivity {
 
                 @Override
                 public void onLongPress(MotionEvent e) {
-                    if(!isSelectionModeEnabled){
-                        enableSelectionMode(v);
-
-                    }else{
-                        disableSelectionMode();
-                    }
+                    enableSelectionMode(v);
                 }
             });
 
@@ -406,12 +400,7 @@ public class Sessions extends AppCompatActivity {
 
                     @Override
                     public void onLongPress(MotionEvent e) {
-                        if(!isSelectionModeEnabled){
-                            enableSelectionMode(v);
-
-                        }else{
-                            disableSelectionMode();
-                        }
+                        enableSelectionMode(v);
                     }
                 });
 
@@ -423,61 +412,60 @@ public class Sessions extends AppCompatActivity {
             });
         }catch (Exception ignored ){}
     }
-    private void removeRowWithAnimation(@NonNull final View view, final boolean swipeRight) {try{
-        final int defaultBackgroundColor = view.getSolidColor();
-        ImageView redOverlay = view.findViewById(R.id.imageView);
-        ImageView redOverlay2 = view.findViewById(R.id.sora);
-        final int swipeBackgroundColor = getResources().getColor(R.color.REDD); // Change color as needed
-        final int originalIndex = (int) view.getTag();
-        Animation animation = new TranslateAnimation(0, swipeRight ? view.getWidth() : -view.getWidth(), 0, 0);
-        animation.setDuration(300);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                view.setBackgroundColor(swipeBackgroundColor);
-                if(swipeRight)
-                {
-                    redOverlay2.setVisibility(View.VISIBLE);}
-                else{
-                    redOverlay.setVisibility(View.VISIBLE);
+    private void removeRowWithAnimation(@NonNull final View view, final boolean swipeRight) {
+        try {
 
-                }
-                // Animation start
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                lay.removeView(view);
-                for(int i=0;i<lay.getChildCount();i++)
-                {
-                    lay.getChildAt(i).setTag(i);
-                }
-                view.setBackgroundColor(defaultBackgroundColor);
-                if(!isSelectionModeEnabled||(isSelectionModeEnabled&&delvies.size()==1))
-                {
-                    showUndoOption(view,originalIndex);
-                }
-                Ho.setText("Total  Hours : "+sum_hours());
-                no.setText("No. Courses : "+lay.getChildCount());
-                CALC();
-                if(isSelectionModeEnabled)
-                {
-                    if(lay.getChildCount()==0)
+            final int defaultBackgroundColor = view.getSolidColor();
+            ImageView redOverlay = view.findViewById(R.id.imageView);
+            ImageView redOverlay2 = view.findViewById(R.id.sora);
+            final int swipeBackgroundColor = getResources().getColor(R.color.REDD);
+            final int originalIndex = (int) view.getTag();
+            Animation animation = new TranslateAnimation(0, swipeRight ? view.getWidth() : -view.getWidth(), 0, 0);
+            animation.setDuration(300);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    view.setBackgroundColor(swipeBackgroundColor);
+                    if(swipeRight)
                     {
-                        disableSelectionMode();
+                        redOverlay2.setVisibility(View.VISIBLE);}
+                    else{
+                        redOverlay.setVisibility(View.VISIBLE);
+
                     }
                 }
-            }
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    lay.removeView(view);
+                    for(int i=0;i<lay.getChildCount();i++)
+                    {
+                        lay.getChildAt(i).setTag(i);
+                    }
+                    view.setBackgroundColor(defaultBackgroundColor);
+                    if(delvies.size()<=1)
+                    {
+                        showUndoOption(view,originalIndex);
+                    }
+                    Ho.setText("Total  Hours : "+sum_hours());
+                    no.setText("No. Courses : "+lay.getChildCount());
+                    CALC();
+                    disableSelectionMode();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+
+            });
 
 
-        view.startAnimation(animation);
+            view.startAnimation(animation);
 
 
-    }catch (Exception ignored){}}
+        }catch (Exception ignored){}
+    }
     private double parseArabicNumber(String numberString) {
         try {
             DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("ar"));
@@ -509,9 +497,20 @@ public class Sessions extends AppCompatActivity {
             }
         }catch (Exception ignored){}
     }
+    public boolean got_it(Vie obj)
+    {
+        for (int i=0;i<delvies.size();i++)
+        {
+            if((delvies.get(i).getVi()==obj.getVi()&&delvies.get(i).getPlace()==obj.getPlace()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     private void undoRowDeletion(View deletedView, final int originalIndex) {
         try {
-            if ((!isSelectionModeEnabled&&delvies.size()==0)||(isSelectionModeEnabled&&delvies.size()==1)) {
+            if (!got_it(new Vie(deletedView,originalIndex))) {
                 final ImageView redOverlay = deletedView.findViewById(R.id.imageView);
                 redOverlay.setVisibility(View.GONE);
                 final ImageView redOverlay2 = deletedView.findViewById(R.id.sora);
@@ -529,55 +528,27 @@ public class Sessions extends AppCompatActivity {
                 no.setText("No. Courses : " + lay.getChildCount());
                 CALC();
             } else {
-
                 sortVieList(delvies);
                 for (int i = 0; i < delvies.size(); i++) {
                     int j = delvies.get(i).place;
                     View de = delvies.get(i).vi;
-                    lay.removeView(de);
                     final ImageView redOverlay = de.findViewById(R.id.imageView);
+                    final Button m = de.findViewById(R.id.button2);
+                    m.setVisibility(View.GONE);
+                    m.setBackgroundColor(Color.TRANSPARENT);
+                    m.setText("");
                     redOverlay.setVisibility(View.GONE);
                     final ImageView redOverlay2 = de.findViewById(R.id.sora);
                     redOverlay2.setVisibility(View.GONE);
                     lay.addView(de, j);
-                    vies.add(new Vie(de,j));
                     for(int k=0;k<lay.getChildCount();k++)
                     {
                         lay.getChildAt(k).setTag(k);
                     }
                 }
+
                 Ho.setText("Total  Hours : " + sum_hours());
                 no.setText("No. Courses : " + lay.getChildCount());
-                if(!isSelectionModeEnabled) {
-                    try {
-                        isSelectionModeEnabled = true;
-                        more.setImageDrawable(getDrawable(R.drawable.baseline_delete_sweep_24));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            more.setTooltipText("Delete");
-                        }
-                        add.setImageDrawable(getDrawable(R.drawable.baseline_exit_to_app_24));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            add.setTooltipText("exit multiple selection mode");
-                        }
-                        add.show();
-                        add.setOnClickListener(v -> disableSelectionMode());
-                        closed=true;
-                        more.setOnClickListener(v -> {
-                            delvies.clear();
-                            delvies.addAll(vies);
-                            vies.clear();
-                            int i=0;
-                            for(;i<delvies.size();i++)
-                            {
-                                removeRowWithAnimation(delvies.get(i).vi,false);
-                            }
-                            if(delvies.size()>1)
-                            {
-                                showUndoOption(delvies.get(i-1).vi, (Integer) delvies.get(i-1).vi.getTag());
-                            }
-                        });
-                    }catch (Exception ignored){}
-                }
                 CALC();
             }
         }catch(Exception ignored){}
