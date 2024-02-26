@@ -106,7 +106,73 @@
                 android:id="@+id/linearLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/currentgpa"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <EditText
+                        android:id="@+id/editTextText3"
+                        android:layout_width="@dimen/_96sdp"
+                        android:layout_height="@dimen/_42sdp"
+                        android:background="@drawable/edittext_border"
+                        android:focusable="false"
+                        android:text="Current GPA"
+                        android:textAlignment="center"
+                        android:textColor="@color/white" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <EditText
+                        android:id="@+id/CHours"
+                        android:layout_width="@dimen/_56sdp"
+                        android:layout_height="@dimen/_42sdp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_border"
+                        android:hint="Hours"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textColorHint="#B3B3B3" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <EditText
+                        android:id="@+id/CGPA"
+                        android:layout_width="@dimen/_56sdp"
+                        android:layout_height="@dimen/_42sdp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_border"
+                        android:gravity="center"
+                        android:hint="GPA"
+                        android:inputType="number|numberDecimal"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/white"
+                        android:textColorHint="#B3B3B3" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+
+                </LinearLayout>
+            </LinearLayout>
         </ScrollView>
 
     </LinearLayout>
@@ -124,6 +190,21 @@
         android:backgroundTint="#F74346"
         android:src="@drawable/baseline_more_horiz_24"
         android:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/setings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/_169sdp"
+        android:layout_marginBottom="@dimen/_16sdp"
+        android:backgroundTint="#F74346"
+        android:src="@drawable/baseline_settings_24"
+        android:tint="@color/white"
+        android:visibility="gone"
+        app:fabSize="auto" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add"
