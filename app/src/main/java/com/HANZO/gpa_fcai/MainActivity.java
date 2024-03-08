@@ -334,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
             t1.setEnabled(true);
         }
         vies.clear();
+        session.hide();
         }catch (Exception ignored){}
     }
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
