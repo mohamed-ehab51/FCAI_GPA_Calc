@@ -151,7 +151,6 @@ public class Sessions extends AppCompatActivity {
             G.setText("GPA : "+0.0);
             try {
                 ArrayList<Subject> coming = getIntent().getParcelableArrayListExtra("data");
-                assert coming != null;
                 if(!coming.isEmpty())
                 {
                     for (int i = 0; i< coming.size(); i++)
