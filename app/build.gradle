@@ -8,11 +8,11 @@ android {
             storeFile file('C:\\Users\\modyd\\.android\\debug.keystore')
         }
     }
-    namespace 'com.HANZO.gpa_fcai'
+    namespace 'com.FCAI.GPA'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.HANZO.gpa_fcai"
+        applicationId "com.FCAI.GPA"
         minSdk 22
         targetSdk 34
         versionCode 3

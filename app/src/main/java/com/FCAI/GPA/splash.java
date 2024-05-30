@@ -1,4 +1,4 @@
-package com.HANZO.gpa_fcai;
+package com.FCAI.GPA;
 
 import android.content.Intent;
 import android.os.Bundle;

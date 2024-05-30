@@ -1,4 +1,4 @@
-package com.HANZO.gpa_fcai;
+package com.FCAI.GPA;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> adapt;
     private boolean isDataLoading = true;
     ArrayAdapter<String> adapter;
-    FloatingActionButton more,add,session,info,settings;
+    FloatingActionButton more,add,session,info;
     boolean closed = true;
     @SuppressLint("SetTextI18n")
     @Override
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
                         if ((k== b1.getPlace())&& row.equals(b1.getVi()))
                         {
                             l.remove();
-                            if(vies.size()==0)
+                            if(vies.isEmpty())
                             {
                                 disableSelectionMode();
                             }
@@ -622,7 +622,7 @@ public class MainActivity extends AppCompatActivity {
             throwdata.clear();
         EditText Cgpa= findViewById(R.id.CGPA);
         EditText CHours= findViewById(R.id.CHours);
-        if(!sh.getString("Current GPA", "").equals("")){
+        if(!sh.getString("Current GPA", "").isEmpty()){
             Cgpa.setText(sh.getString("Current GPA", "").equals("0") ?"":sh.getString("Current GPA",""));}
         String curhours= sh.getString("Current H", "");
         if (curhours.equals("blank")){
@@ -657,7 +657,7 @@ public class MainActivity extends AppCompatActivity {
             try{CALC();}
             catch (Exception ignored){
                 String def=sh.getString("GPA","");
-                if(!def.equals(""))
+                if(!def.isEmpty())
                 {
 
                     try{double gp=Double.parseDouble(def);
@@ -686,7 +686,7 @@ public class MainActivity extends AppCompatActivity {
         EditText Cgpa= findViewById(R.id.CGPA);
         EditText Chour= findViewById(R.id.CHours);
         String cgpa;
-        if(!Cgpa.getText().toString().equals("")){cgpa=(Cgpa.getText().toString());}
+        if(!Cgpa.getText().toString().isEmpty()){cgpa=(Cgpa.getText().toString());}
         else{
             cgpa="0";}
         if(Chour.getText().toString().isEmpty()||Chour.getText().toString().equals(".")){
@@ -700,9 +700,9 @@ public class MainActivity extends AppCompatActivity {
             EditText name = v.findViewById(R.id.editTextText3);
             AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
             AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-            if(name.getText().toString().equals("")){myEdit.putString("Name"+(i-1), "no name provided");}else{myEdit.putString("Name"+(i-1), name.getText().toString());}
-            if(Hours.getText().toString().equals("")){myEdit.putInt("Hours"+(i-1),-1);}else{myEdit.putInt("Hours"+(i-1),adapter.getPosition(Hours.getText().toString()));}
-            if(grade.getText().toString().equals("")){myEdit.putInt("Grade"+(i-1), -1);}else{myEdit.putInt("Grade"+(i-1),adapt.getPosition(grade.getText().toString()));}
+            if(name.getText().toString().isEmpty()){myEdit.putString("Name"+(i-1), "no name provided");}else{myEdit.putString("Name"+(i-1), name.getText().toString());}
+            if(Hours.getText().toString().isEmpty()){myEdit.putInt("Hours"+(i-1),-1);}else{myEdit.putInt("Hours"+(i-1),adapter.getPosition(Hours.getText().toString()));}
+            if(grade.getText().toString().isEmpty()){myEdit.putInt("Grade"+(i-1), -1);}else{myEdit.putInt("Grade"+(i-1),adapt.getPosition(grade.getText().toString()));}
             System.out.println("i saved :"+(i-1));
         }
 
@@ -718,17 +718,17 @@ public class MainActivity extends AppCompatActivity {
             EditText name = v.findViewById(R.id.editTextText3);
             AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
             AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-            if (name.getText().toString().equals("")) {
+            if (name.getText().toString().isEmpty()) {
                 sub.name = "";
             } else {
                 sub.name = name.getText().toString();
             }
-            if (grade.getText().toString().equals("")) {
+            if (grade.getText().toString().isEmpty()) {
                 sub.grade = -1.0;
             } else {
                 sub.grade = (double) adapt.getPosition(grade.getText().toString());
             }
-            if (Hours.getText().toString().equals("")) {
+            if (Hours.getText().toString().isEmpty()) {
                 sub.hours = -1;
             } else {
                 sub.hours = adapter.getPosition(Hours.getText().toString());
@@ -745,17 +745,17 @@ public class MainActivity extends AppCompatActivity {
             EditText name = v.findViewById(R.id.editTextText3);
             AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
             AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-            if (name.getText().toString().equals("")) {
+            if (name.getText().toString().isEmpty()) {
                 sub.name = "";
             } else {
                 sub.name = name.getText().toString();
             }
-            if (grade.getText().toString().equals("")) {
+            if (grade.getText().toString().isEmpty()) {
                 sub.grade = -1.0;
             } else {
                 sub.grade = (double) adapt.getPosition(grade.getText().toString());
             }
-            if (Hours.getText().toString().equals("")) {
+            if (Hours.getText().toString().isEmpty()) {
                 sub.hours = -1;
             } else {
                 sub.hours = adapter.getPosition(Hours.getText().toString());
@@ -792,7 +792,7 @@ public class MainActivity extends AppCompatActivity {
         {
             View v = lay.getChildAt(i);
             AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-            if(!Hours.getText().toString().equals(""))
+            if(!Hours.getText().toString().isEmpty())
             {
                 String s=Hours.getText().toString();
                 if(!s.equals(".")){
@@ -885,7 +885,7 @@ public class MainActivity extends AppCompatActivity {
             EditText ed= deletedView.findViewById(R.id.editTextText3);
             String subname= ed.getText().toString();
             Snackbar snackbar;
-            if(subname.equals("")){
+            if(subname.isEmpty()){
                 snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_SHORT)
                         .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
             }
@@ -1004,10 +1004,10 @@ public class MainActivity extends AppCompatActivity {
                 EditText name=v.findViewById(R.id.editTextText3);
                 AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
                 AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-                if(!(grade.getText().toString().equals("")) && !(Hours.getText().toString().equals("")))
+                if(!(grade.getText().toString().isEmpty()) && !(Hours.getText().toString().isEmpty()))
                 {
                     if(dict.get(grade.getText().toString())!=-1){
-                        if(name.getText().toString().equals("")){sub.setName("no name provided");}
+                        if(name.getText().toString().isEmpty()){sub.setName("no name provided");}
                         else {sub.setName(name.getText().toString());}
                         sub.setHours(Integer.parseInt(Hours.getText().toString()));
                         sub.setGrade(dict.get(grade.getText().toString()));

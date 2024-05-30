@@ -1,15 +1,11 @@
-package com.HANZO.gpa_fcai;
+package com.FCAI.GPA;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,8 +15,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Objects;
 
 public class Settings extends AppCompatActivity {

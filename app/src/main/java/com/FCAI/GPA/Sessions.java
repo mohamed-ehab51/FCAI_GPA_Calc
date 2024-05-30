@@ -1,4 +1,4 @@
-package com.HANZO.gpa_fcai;
+package com.FCAI.GPA;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -151,7 +151,8 @@ public class Sessions extends AppCompatActivity {
             G.setText("GPA : "+0.0);
             try {
                 ArrayList<Subject> coming = getIntent().getParcelableArrayListExtra("data");
-                if(coming.size()!=0)
+                assert coming != null;
+                if(!coming.isEmpty())
                 {
                     for (int i = 0; i< coming.size(); i++)
                     {
@@ -230,7 +231,7 @@ public class Sessions extends AppCompatActivity {
                             if ((k== b1.getPlace())&& row.equals(b1.getVi()))
                             {
                                 l.remove();
-                                if(vies.size()==0)
+                                if(vies.isEmpty())
                                 {
                                     disableSelectionMode();
                                 }
@@ -378,7 +379,7 @@ public class Sessions extends AppCompatActivity {
         {
             View v = lay.getChildAt(i);
             AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-            if(!Hours.getText().toString().equals(""))
+            if(!Hours.getText().toString().isEmpty())
             {
                 String s=Hours.getText().toString();
                 if(!s.equals(".")){
@@ -570,7 +571,7 @@ public class Sessions extends AppCompatActivity {
             EditText ed= deletedView.findViewById(R.id.editTextText3);
             String subname= ed.getText().toString();
             Snackbar snackbar;
-            if(subname.equals("")){
+            if(subname.isEmpty()){
                 snackbar = Snackbar.make(lay, "you deleted a subject", Snackbar.LENGTH_SHORT)
                         .setAction("Undo", v -> undoRowDeletion(deletedView, originalIndex));
             }
@@ -681,9 +682,9 @@ public class Sessions extends AppCompatActivity {
                 EditText name=v.findViewById(R.id.editTextText3);
                 AutoCompleteTextView grade = v.findViewById(R.id.autoCompleteTextView2);
                 AutoCompleteTextView Hours = v.findViewById(R.id.autoCompleteTextView20);
-                if(!(grade.getText().toString().equals("")) && !(Hours.getText().toString().equals("")))
+                if(!(grade.getText().toString().isEmpty()) && !(Hours.getText().toString().isEmpty()))
                 {
-                        if(name.getText().toString().equals("")){sub.setName("no name provided");}
+                        if(name.getText().toString().isEmpty()){sub.setName("no name provided");}
                         else {sub.setName(name.getText().toString());}
                         sub.setHours(Integer.parseInt(Hours.getText().toString()));
                         sub.setGrade(dict.get(grade.getText().toString()));
